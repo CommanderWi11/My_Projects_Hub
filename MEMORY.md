@@ -2,11 +2,11 @@
 
 ## Status
 - Created: 2026-05-19
-- State: Local build complete, awaiting GitHub repo + Pages deploy
+- State: Deployed to GitHub Pages
 
 ## Deployed URL
-- Planned: https://commanderwi11.github.io/my-projects-hub/
-- Repo: CommanderWi11/my-projects-hub (to be created)
+- Live: https://commanderwi11.github.io/my-projects-hub/
+- Repo: https://github.com/CommanderWi11/my-projects-hub
 
 ## Access
 - Password gate (client-side): `airnest2020`
@@ -19,6 +19,4 @@
 - Adding a project = edit `projects.json`, commit, push. No HTML edits.
 
 ## Open loops
-- Create GitHub repo and push
-- Enable GitHub Pages on `main`
-- Verify deployed URL renders, gate works, every link opens
+- (none)
