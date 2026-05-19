@@ -5,8 +5,8 @@
 - State: Deployed to GitHub Pages
 
 ## Deployed URL
-- Live: https://commanderwi11.github.io/my-projects-hub/
-- Repo: https://github.com/CommanderWi11/my-projects-hub
+- Live: https://commanderwi11.github.io/My_Projects_Hub/ (case-sensitive after 2026-05-19 rename)
+- Repo: https://github.com/CommanderWi11/My_Projects_Hub
 
 ## Access
 - Password gate (client-side): `airnest2020`
