@@ -1,12 +1,12 @@
 {
   "projects": [
-    { "hq": "personal", "name": "ai-supastack",         "url": "https://cammanderwi11.github.io/ai-supastack/" },
-    { "hq": "personal", "name": "Family Plan",          "url": "https://family-plan.pages.dev" },
-    { "hq": "personal", "name": "Family Trip Tenerife", "url": "https://commanderwi11.github.io/family-trip-tenerife/" },
-    { "hq": "personal", "name": "Family Week",          "url": "https://commanderwi11.github.io/family-week/" },
-    { "hq": "personal", "name": "BYD Control",          "url": "https://byd-control.vercel.app" },
-    { "hq": "personal", "name": "Camper Lifestyle",     "url": "https://commanderwi11.github.io/camper-lifestyle/" },
-    { "hq": "personal", "name": "My Projects Hub",      "url": "https://commanderwi11.github.io/my-projects-hub/" },
+    { "hq": "personal", "name": "AI Supastack",        "url": "https://commanderwi11.github.io/AI_Supastack/" },
+    { "hq": "personal", "name": "Family Plan",         "url": "https://family-plan.pages.dev" },
+    { "hq": "personal", "name": "Family Trip Tenerife","url": "https://commanderwi11.github.io/Family_Trip_Tenerife/" },
+    { "hq": "personal", "name": "Family Week",         "url": "https://commanderwi11.github.io/Family_Week/" },
+    { "hq": "personal", "name": "BYD Control",         "url": "https://byd-control.vercel.app" },
+    { "hq": "personal", "name": "Camper Lifestyle",    "url": "https://commanderwi11.github.io/Camper_Lifestyle/" },
+    { "hq": "personal", "name": "My Projects Hub",     "url": "https://commanderwi11.github.io/My_Projects_Hub/" },
 
     { "hq": "airnest",  "name": "Airnest Shared (reports)", "url": "https://airnest-homes-sl.github.io/airnest-shared/" }
   ]
