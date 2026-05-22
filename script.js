@@ -35,6 +35,7 @@ form.addEventListener("submit", (e) => {
 });
 
 async function unlock() {
+  document.body.classList.remove("locked");
   gate.hidden = true;
   content.hidden = false;
   try {

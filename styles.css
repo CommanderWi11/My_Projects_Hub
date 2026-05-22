@@ -141,6 +141,12 @@ header::before {
 }
 .mast-strip b { color: var(--paper); font-weight: 500; }
 
+/* ── LOCKED STATE — strip masthead down to just the title ── */
+body.locked .mast-eyebrow,
+body.locked .mast-sub,
+body.locked .mast-strip { display: none; }
+body.locked header { padding-bottom: 8px; }
+
 /* ── MAIN ── */
 main {
   position: relative;
