@@ -93,8 +93,8 @@ header::before {
 .mast-word {
   font-family: 'Instrument Serif', serif;
   font-weight: 400;
-  font-size: clamp(58px, 12.5vw, 158px);
-  line-height: 0.92;
+  font-size: clamp(29px, 6.25vw, 79px);
+  line-height: 0.96;
   letter-spacing: -0.015em;
   color: var(--paper);
   padding: 14px 0 6px;
