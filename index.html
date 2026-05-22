@@ -4,26 +4,60 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>Projects</title>
+  <title>Projects · CommanderWi11</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main>
-    <header><h1>Projects</h1></header>
 
-    <section id="gate" hidden>
+  <div class="vignette"></div>
+  <div class="grain"></div>
+
+  <header>
+    <div class="mast-rule"></div>
+    <div class="mast-eyebrow">
+      <span>CommanderWi11 <span class="key">/</span> Personal Index</span>
+      <span>Restricted Access</span>
+    </div>
+    <h1 class="mast-word">Projects<span class="dot">·</span></h1>
+    <p class="mast-sub">Every URL I've shipped — across personal, Airnest, and the cockpit.<span class="mast-cite">— Maintained May 2026</span></p>
+    <div class="mast-strip">
+      <span><b id="mast-count">—</b> &nbsp;in catalogue</span>
+      <span>Vol.&nbsp;01 &nbsp;—&nbsp; HQ-grouped</span>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ════ GATE ════ -->
+    <section class="band" id="gate" hidden>
+      <div class="band-head">
+        <span class="band-mark"></span>
+        <span class="band-name">Access</span>
+      </div>
       <form id="gate-form" autocomplete="off">
         <label for="pw">Password</label>
         <input id="pw" type="password" autofocus>
-        <button type="submit">Enter</button>
-        <p id="gate-error" hidden>Incorrect.</p>
+        <div class="gate-actions">
+          <button type="submit">Enter</button>
+          <p id="gate-error" hidden>Incorrect.</p>
+        </div>
       </form>
     </section>
 
+    <!-- ════ CONTENT ════ -->
     <section id="content" hidden>
       <div id="groups"></div>
     </section>
+
   </main>
+
+  <footer>
+    <span>CommanderWi11 <span class="mark">·</span> Personal Index</span>
+    <span>Not for external distribution</span>
+  </footer>
 
   <script src="script.js"></script>
 </body>

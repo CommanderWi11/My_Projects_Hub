@@ -2,6 +2,7 @@
 
 ## Status
 - Created: 2026-05-19
+- Restyled to "Night Ledger" house style: 2026-05-23
 - State: Deployed to GitHub Pages
 
 ## Deployed URL

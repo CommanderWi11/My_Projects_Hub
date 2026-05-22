@@ -4,7 +4,7 @@ A single, password-gated webpage that lists every project Luis has with a deploy
 
 ## Scope
 
-- Maintain a clean, minimalist index of all live project URLs
+- Maintain a clean index of all live project URLs
 - Add a new entry whenever a project ships a deployed URL
 - Keep the gate simple (client-side password, sessionStorage)
 
@@ -15,11 +15,27 @@ Read on entry:
 2. `MEMORY.md` — current status, deployed URL, password
 3. `projects.json` — the canonical list of project links
 
+## House Style — "Night Ledger" (since 2026-05-23)
+
+Matches the Shared·Airnest portal aesthetic: dark warm-near-black background,
+parchment text, ember accent, Instrument Serif display / Hanken Grotesk body /
+IBM Plex Mono labels, paper-grain + vignette atmosphere.
+
+- Markup lives in `index.html`; styling in `styles.css`; row rendering in
+  `script.js`. The visual language is one-to-one with
+  `02_Airnest_HQ/Projects/Shared_Airnest/index.html` — when in doubt, mirror
+  its tokens / spacing.
+- Each HQ is a `band` (`hq-personal`, `hq-airnest`, `hq-pilot`). Personal is
+  highlighted ember; the others use paper / faint marks.
+- Project rows reuse the ledger row pattern: ember chip + serif title + mono
+  URL + host tag + arrow.
+
 ## Working Style
 
-- Adding a project = edit `projects.json` only (no HTML changes)
-- Commit & push to `main`; GitHub Pages redeploys automatically
-- Keep design minimalist — no cards, shadows, or decoration
+- **Adding a project = edit `projects.json` only.** No HTML or CSS changes per
+  project. `script.js` does all the row rendering from JSON.
+- Commit & push to `main`; GitHub Pages redeploys automatically.
+- Style changes go in `styles.css`; never inline per-row styles.
 
 ## Rules
 
