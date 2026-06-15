@@ -3,10 +3,14 @@
     { "hq": "personal", "name": "AI Supastack",        "url": "https://commanderwi11.github.io/AI_Supastack/" },
     { "hq": "personal", "name": "Family Plan",         "url": "https://family-plan.pages.dev" },
     { "hq": "personal", "name": "Family Trip Tenerife","url": "https://commanderwi11.github.io/Family_Trip_Tenerife/" },
-    { "hq": "personal", "name": "Family Week",         "url": "https://commanderwi11.github.io/Family_Week/" },
+    { "hq": "personal", "name": "Family Week",         "url": "https://family-week.pages.dev" },
     { "hq": "personal", "name": "BYD Control",         "url": "https://byd-control.vercel.app" },
     { "hq": "personal", "name": "Camper Lifestyle",    "url": "https://commanderwi11.github.io/Camper_Lifestyle/" },
     { "hq": "personal", "name": "My Projects Hub",     "url": "https://commanderwi11.github.io/My_Projects_Hub/" },
+    { "hq": "personal", "name": "Whoop WhatsApp",      "url": "https://whoop-whatsapp.vercel.app" },
+    { "hq": "personal", "name": "BSA Options (sale dashboard)", "url": "https://bsa-options.pages.dev" },
+
+    { "hq": "personal", "name": "Flight Portal (Angelita)", "url": "https://angelita-vuelos.vercel.app" },
 
     { "hq": "airnest",  "name": "Airnest Shared (reports)", "url": "https://airnest-homes-sl.github.io/airnest-shared/" }
   ]
