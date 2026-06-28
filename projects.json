@@ -61,7 +61,66 @@
       "desc": "Flight search portal for Luis's mother — find and request round-trips or one-way flights, with email confirmation via Resend"
     },
 
-    { "hq": "airnest", "name": "Airnest Shared (reports)", "url": "https://airnest-homes-sl.github.io/airnest-shared/",
-      "desc": "Airnest Homes SL shared portal — operational reports and documents for owners and partners" }
+    {
+      "hq": "airnest",
+      "name": "Airnest Shared",
+      "url": "https://airnest-homes-sl.github.io/airnest-shared/",
+      "desc": "Password-gated internal portal publishing CEO briefings, integration reports, and operational snapshots — Night Ledger dark editorial style on GitHub Pages"
+    },
+    {
+      "hq": "airnest",
+      "name": "Weekly Ops Briefing",
+      "url": "https://github.com/Airnest-Homes-SL",
+      "desc": "Automated Monday CEO briefing pipeline — Claude reads all project files + Gmail, generates a reviewed HTML report, and emails to CEO Javier Navarro after Luis approves"
+    },
+    {
+      "hq": "airnest",
+      "name": "Mews API Connector",
+      "url": "https://github.com/Airnest-Homes-SL/mews-api-connector",
+      "desc": "Certified Mews integration client (Partner INT003752) — stdlib-only Python wrappers for reservations, bills, and customers across all 8 properties"
+    },
+    {
+      "hq": "airnest",
+      "name": "Guesty–Mews Migration",
+      "url": "https://github.com/Airnest-Homes-SL",
+      "desc": "Active PMS migration for all 8 Airnest properties from Guesty to Mews — API probes, field mapping, reservation imports, and per-property configuration runbooks"
+    },
+    {
+      "hq": "airnest",
+      "name": "Parte",
+      "url": "https://github.com/Airnest-Homes-SL",
+      "desc": "Multi-tenant SaaS auto-filing Spanish SES.Hospedajes guest reports — per-unit owner remapping, XML PV/RH builders, SOAP submission, and 59 tests passing"
+    },
+    {
+      "hq": "airnest",
+      "name": "Airnest Ops Brain",
+      "url": "https://webhooks.airnest.es",
+      "desc": "Architecture for Airnest's internal intelligence layer — FastMCP + SQLite data lake connecting 9 tools; Mews webhook receiver live on Hetzner VPS"
+    },
+    {
+      "hq": "airnest",
+      "name": "Conduit Onboarding",
+      "url": "https://github.com/Airnest-Homes-SL",
+      "desc": "Procurement tracker for Conduit.ai as Airnest's AI front-desk — WhatsApp, OTA inbox, email, voice AI, and Mews integration; CEO approved, demo pending"
+    },
+
+    {
+      "hq": "pilot",
+      "name": "Crew Briefing",
+      "url": "https://github.com/CommanderWi11/Crew-Briefing",
+      "desc": "Automated pre-flight briefing for Binter E195-E2 — headless Playwright PDF scraper, weather and NOTAM extraction, and HTML email timed to STD−90min via launchd"
+    },
+    {
+      "hq": "pilot",
+      "name": "Flight Bag",
+      "url": "https://github.com/CommanderWi11/Flight_Bag",
+      "desc": "Pilot operations suite — daily Binter Gmail capture and classification, Monday manual mirror with highlight promotion, and dual-mode pre-flight schedule digest"
+    },
+    {
+      "hq": "pilot",
+      "name": "eCrew MCP",
+      "url": "https://github.com/CommanderWi11/MCP_Projects",
+      "desc": "MCP server for Binter eCrew portal — headless login, monthly roster PDF download, structured parsing of flights and standby duties, and Claude tool exposure"
+    }
   ]
 }
