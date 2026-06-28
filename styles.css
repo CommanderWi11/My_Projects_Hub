@@ -262,12 +262,10 @@ main {
 }
 
 .row-desc {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12.5px;
-  line-height: 1.5;
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 13px;
+  line-height: 1.55;
   color: #B4AA99;
-  word-break: break-all;
-  overflow-wrap: anywhere;
 }
 
 .row-meta {

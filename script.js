@@ -90,7 +90,7 @@ function render(projects) {
         '<div class="row-main">' +
           '<span class="row-cat">' + HQ_LABEL[hq] + '</span>' +
           '<h2 class="row-title">' + escapeHtml(p.name) + '</h2>' +
-          '<p class="row-desc">' + escapeHtml(p.url) + '</p>' +
+          '<p class="row-desc">' + escapeHtml(p.desc || p.url) + '</p>' +
         '</div>' +
         '<div class="row-meta">' +
           '<span class="row-tag">' + escapeHtml(hostOf(p.url)) + '</span>' +
