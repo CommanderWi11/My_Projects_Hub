@@ -86,7 +86,8 @@
           "kind": "npm",
           "run": "dev",
           "long": true,
-          "sensitive": true
+          "sensitive": true,
+          "primary": true
         },
         {
           "id": "build",
@@ -167,7 +168,8 @@
           "label": "Dev server",
           "kind": "npm",
           "run": "dev",
-          "long": true
+          "long": true,
+          "primary": true
         },
         {
           "id": "build",
@@ -203,7 +205,8 @@
           "label": "Sync portals",
           "kind": "npm",
           "run": "sync",
-          "sensitive": true
+          "sensitive": true,
+          "primary": true
         },
         {
           "id": "venta-sync",
@@ -374,7 +377,8 @@
           "label": "Dev server",
           "kind": "npm",
           "run": "dev",
-          "long": true
+          "long": true,
+          "primary": true
         },
         {
           "id": "build",
@@ -474,7 +478,8 @@
           "label": "Probe",
           "kind": "npm",
           "run": "probe",
-          "cwd": "Mews_Demo_Test"
+          "cwd": "Mews_Demo_Test",
+          "primary": true
         },
         {
           "id": "inspect",
@@ -585,7 +590,8 @@
           "id": "capture",
           "label": "Capture inbox",
           "kind": "shell",
-          "run": "Herramientas/_capture/capture.sh"
+          "run": "Herramientas/_capture/capture.sh",
+          "primary": true
         },
         {
           "id": "download",
