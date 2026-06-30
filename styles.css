@@ -517,11 +517,7 @@ main {
   border-radius: 50%;
   animation: spin .7s linear infinite;
 }
-.act.long::after {
-  content: "▸";
-  font-size: 9px;
-  color: var(--muted);
-}
+.act.long::after { content: none; }
 .act.sensitive .lock { color: var(--kind-launchd); font-weight: 700; }
 .act.locked-action { opacity: .5; }
 .act.locked-action .dot { background: var(--kind-launchd); }
@@ -563,6 +559,67 @@ main {
   border-top: 1px dashed var(--border);
 }
 .more-actions[hidden] { display: none; }
+
+/* action + info-icon wrapper */
+.act-wrap { display: inline-flex; align-items: center; gap: 6px; }
+.act-wrap-primary { display: flex; width: 100%; }
+.act-wrap-primary .act-primary { flex: 1; }
+
+/* little (i) with hover/tap explanation */
+.info {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-style: normal;
+  line-height: 1;
+  cursor: help;
+  flex-shrink: 0;
+  transition: color .15s, border-color .15s;
+}
+.info:hover, .info:focus { color: var(--accent); border-color: var(--accent-line); outline: none; }
+.tip {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  right: -6px;
+  width: max-content;
+  max-width: 250px;
+  padding: 9px 11px;
+  background: var(--text);
+  color: var(--bg);
+  border-radius: 9px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-align: left;
+  white-space: normal;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(3px);
+  transition: opacity .15s var(--ease), transform .15s var(--ease), visibility .15s;
+  z-index: 70;
+  pointer-events: none;
+}
+.tip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 10px;
+  border: 5px solid transparent;
+  border-top-color: var(--text);
+}
+.info:hover .tip, .info:focus .tip, .info.show .tip { opacity: 1; visibility: visible; transform: translateY(0); }
 
 /* launchd grouped control */
 .job {

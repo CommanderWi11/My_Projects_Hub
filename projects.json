@@ -11,30 +11,34 @@
       "actions": [
         {
           "id": "capture",
-          "label": "Capture stack",
+          "label": "Capture installed stack",
           "kind": "shell",
           "run": "scripts/capture-stack.sh",
-          "primary": true
+          "primary": true,
+          "info": "Snapshots every tool installed on this Mac (Homebrew formulae & casks, languages, etc.) into a versioned JSON file."
         },
         {
           "id": "sync",
-          "label": "Sync stack",
+          "label": "Publish stack to website",
           "kind": "node",
-          "run": "scripts/sync-stack.mjs"
+          "run": "scripts/sync-stack.mjs",
+          "info": "Pushes the captured stack data up to the AI Supastack site on GitHub."
         },
         {
           "id": "test-sync",
-          "label": "Test sync",
+          "label": "Test publish (dry run)",
           "kind": "node",
-          "run": "scripts/test-sync.mjs"
+          "run": "scripts/test-sync.mjs",
+          "info": "Runs the publish step without pushing anything — checks it works first."
         },
         {
           "id": "job-capture",
-          "label": "Weekly capture",
+          "label": "Weekly capture (scheduled)",
           "kind": "launchd",
           "run": "scripts/com.commanderwi11.capture-stack.plist",
           "service": "com.commanderwi11.capture-stack",
-          "sensitive": true
+          "sensitive": true,
+          "info": "The background job that auto-captures your stack once a week."
         }
       ]
     },
@@ -66,9 +70,10 @@
       "actions": [
         {
           "id": "test",
-          "label": "Test",
+          "label": "Run tests",
           "kind": "npm",
-          "run": "test"
+          "run": "test",
+          "info": "Runs the Jest test suite for Family Week."
         }
       ]
     },
@@ -82,51 +87,58 @@
       "actions": [
         {
           "id": "dev",
-          "label": "Dev server",
+          "label": "Start dashboard (dev)",
           "kind": "npm",
           "run": "dev",
           "long": true,
           "sensitive": true,
-          "primary": true
+          "primary": true,
+          "info": "Runs the BYD car dashboard locally at localhost:3000 with live reload. Keeps running until you Stop it."
         },
         {
           "id": "build",
-          "label": "Build",
+          "label": "Build for production",
           "kind": "npm",
-          "run": "build"
+          "run": "build",
+          "info": "Compiles the web dashboard for deployment."
         },
         {
           "id": "build-cli",
-          "label": "Build CLI",
+          "label": "Build the CLI tool",
           "kind": "npm",
-          "run": "build:cli"
+          "run": "build:cli",
+          "info": "Compiles the 'byd' command-line tool that controls the car from a terminal."
         },
         {
           "id": "start",
-          "label": "Start",
+          "label": "Start dashboard (production)",
           "kind": "npm",
           "run": "start",
           "long": true,
-          "sensitive": true
+          "sensitive": true,
+          "info": "Serves the already-built dashboard at localhost:3000. Keeps running until you Stop it."
         },
         {
           "id": "lint",
-          "label": "Lint",
+          "label": "Check code style",
           "kind": "npm",
-          "run": "lint"
+          "run": "lint",
+          "info": "Runs ESLint to flag code issues."
         },
         {
           "id": "test",
-          "label": "Test",
+          "label": "Run tests",
           "kind": "npm",
-          "run": "test"
+          "run": "test",
+          "info": "Runs the Vitest test suite."
         },
         {
           "id": "test-watch",
-          "label": "Test (watch)",
+          "label": "Run tests (watch)",
           "kind": "npm",
           "run": "test:watch",
-          "long": true
+          "long": true,
+          "info": "Re-runs tests automatically as files change. Keeps running until you Stop it."
         }
       ]
     },
@@ -140,9 +152,10 @@
       "actions": [
         {
           "id": "search",
-          "label": "Search listings",
+          "label": "Search for campervans",
           "kind": "python",
-          "run": "scripts/search.py"
+          "run": "scripts/search.py",
+          "info": "Scrapes Wallapop, Milanuncios and Coches.net for matching Canary-Islands campervans and updates the listings."
         }
       ]
     },
@@ -165,30 +178,34 @@
       "actions": [
         {
           "id": "dev",
-          "label": "Dev server",
+          "label": "Start dev server",
           "kind": "npm",
           "run": "dev",
           "long": true,
-          "primary": true
+          "primary": true,
+          "info": "Runs the Whoop-to-WhatsApp app locally at localhost:3000. Keeps running until you Stop it."
         },
         {
           "id": "build",
-          "label": "Build",
+          "label": "Build for production",
           "kind": "npm",
-          "run": "build"
+          "run": "build",
+          "info": "Compiles the app for deployment."
         },
         {
           "id": "start",
-          "label": "Start",
+          "label": "Start (production)",
           "kind": "npm",
           "run": "start",
-          "long": true
+          "long": true,
+          "info": "Serves the built app at localhost:3000. Keeps running until you Stop it."
         },
         {
           "id": "lint",
-          "label": "Lint",
+          "label": "Check code style",
           "kind": "npm",
-          "run": "lint"
+          "run": "lint",
+          "info": "Runs ESLint."
         }
       ]
     },
@@ -202,165 +219,188 @@
       "actions": [
         {
           "id": "sync",
-          "label": "Sync portals",
+          "label": "Sync inbox & update pipeline",
           "kind": "npm",
           "run": "sync",
           "sensitive": true,
-          "primary": true
+          "primary": true,
+          "info": "Pulls new Idealista/Fotocasa buyer messages, updates the sale pipeline and drafts replies for review."
         },
         {
           "id": "venta-sync",
-          "label": "Venta sync",
+          "label": "Sync sale data",
           "kind": "npm",
           "run": "venta:sync",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Refreshes the for-sale (venta) listing and pipeline data."
         },
         {
           "id": "cli",
-          "label": "CLI",
+          "label": "Open command-line tool",
           "kind": "npm",
           "run": "cli",
-          "long": true
+          "long": true,
+          "info": "Opens the interactive CLI for the apartment-sale tracker. Keeps running until you Stop it."
         },
         {
           "id": "dashboard",
-          "label": "Dashboard",
+          "label": "Open sale dashboard",
           "kind": "npm",
           "run": "dashboard",
-          "long": true
+          "long": true,
+          "info": "Starts the local web dashboard for the sale pipeline. Keeps running until you Stop it."
         },
         {
           "id": "init",
-          "label": "Init DB",
+          "label": "Set up database",
           "kind": "npm",
-          "run": "init"
+          "run": "init",
+          "info": "Creates the local database — first-time setup only."
         },
         {
           "id": "backup",
-          "label": "Backup DB",
+          "label": "Back up database",
           "kind": "npm",
-          "run": "backup"
+          "run": "backup",
+          "info": "Saves a timestamped copy of the local database."
         },
         {
           "id": "login-idealista",
-          "label": "Login Idealista",
+          "label": "Sign in to Idealista",
           "kind": "npm",
           "run": "login:idealista",
           "long": true,
-          "sensitive": true
+          "sensitive": true,
+          "info": "Opens a browser and logs in to your Idealista account."
         },
         {
           "id": "login-fotocasa",
-          "label": "Login Fotocasa",
+          "label": "Sign in to Fotocasa",
           "kind": "npm",
           "run": "login:fotocasa",
           "long": true,
-          "sensitive": true
+          "sensitive": true,
+          "info": "Opens a browser and logs in to your Fotocasa account."
         },
         {
           "id": "create-idealista",
-          "label": "Create Idealista",
+          "label": "Publish listing on Idealista",
           "kind": "npm",
           "run": "create:idealista",
           "long": true,
-          "sensitive": true
+          "sensitive": true,
+          "info": "Creates the apartment sale listing on Idealista."
         },
         {
           "id": "create-fotocasa",
-          "label": "Create Fotocasa",
+          "label": "Publish listing on Fotocasa",
           "kind": "npm",
           "run": "create:fotocasa",
           "long": true,
-          "sensitive": true
+          "sensitive": true,
+          "info": "Creates the apartment sale listing on Fotocasa."
         },
         {
           "id": "migrate-sale-tracker",
-          "label": "Migrate: sale tracker",
+          "label": "DB upgrade: sale tracker",
           "kind": "npm",
-          "run": "migrate:sale-tracker"
+          "run": "migrate:sale-tracker",
+          "info": "One-off database migration (sale-tracker schema)."
         },
         {
           "id": "migrate-approve-send",
-          "label": "Migrate: approve/send",
+          "label": "DB upgrade: approve/send",
           "kind": "npm",
-          "run": "migrate:approve-send"
+          "run": "migrate:approve-send",
+          "info": "One-off database migration (approve/send schema)."
         },
         {
           "id": "test",
-          "label": "Test",
+          "label": "Run tests",
           "kind": "npm",
-          "run": "test"
+          "run": "test",
+          "info": "Runs the Vitest test suite."
         },
         {
           "id": "test-watch",
-          "label": "Test (watch)",
+          "label": "Run tests (watch)",
           "kind": "npm",
           "run": "test:watch",
-          "long": true
+          "long": true,
+          "info": "Re-runs tests as files change. Keeps running until you Stop it."
         },
         {
           "id": "larga-build",
-          "label": "Larga: build",
+          "label": "Long-stay: build",
           "kind": "npm",
-          "run": "larga:build"
+          "run": "larga:build",
+          "info": "Compiles the long-stay (larga estancia) rental tool."
         },
         {
           "id": "larga-init",
-          "label": "Larga: init",
+          "label": "Long-stay: set up database",
           "kind": "npm",
-          "run": "larga:init"
+          "run": "larga:init",
+          "info": "Creates the long-stay rental database."
         },
         {
           "id": "larga-sync",
-          "label": "Larga: sync",
+          "label": "Long-stay: sync inbox",
           "kind": "npm",
           "run": "larga:sync",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Pulls new long-stay rental inquiries and updates the pipeline."
         },
         {
           "id": "larga-triage",
-          "label": "Larga: triage",
+          "label": "Long-stay: triage inquiries",
           "kind": "npm",
           "run": "larga:triage",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Sorts incoming long-stay inquiries and drafts replies."
         },
         {
           "id": "larga-cli",
-          "label": "Larga: CLI",
+          "label": "Long-stay: command-line tool",
           "kind": "npm",
           "run": "larga:cli",
-          "long": true
+          "long": true,
+          "info": "Interactive CLI for the long-stay rental tool. Keeps running until you Stop it."
         },
         {
           "id": "larga-dashboard",
-          "label": "Larga: dashboard",
+          "label": "Long-stay: dashboard",
           "kind": "npm",
           "run": "larga:dashboard",
-          "long": true
+          "long": true,
+          "info": "Local web dashboard for long-stay rentals. Keeps running until you Stop it."
         },
         {
           "id": "larga-login-ha",
-          "label": "Larga: login HousingAnywhere",
+          "label": "Long-stay: sign in to HousingAnywhere",
           "kind": "npm",
           "run": "larga:login:housinganywhere",
           "long": true,
-          "sensitive": true
+          "sensitive": true,
+          "info": "Logs in to your HousingAnywhere account."
         },
         {
           "id": "larga-create-idealista",
-          "label": "Larga: create Idealista",
+          "label": "Long-stay: publish on Idealista",
           "kind": "npm",
           "run": "larga:create:idealista",
           "long": true,
-          "sensitive": true
+          "sensitive": true,
+          "info": "Creates the long-stay rental listing on Idealista."
         },
         {
           "id": "larga-create-ha",
-          "label": "Larga: create HousingAnywhere",
+          "label": "Long-stay: publish on HousingAnywhere",
           "kind": "npm",
           "run": "larga:create:housinganywhere",
           "long": true,
-          "sensitive": true
+          "sensitive": true,
+          "info": "Creates the long-stay rental listing on HousingAnywhere."
         }
       ]
     },
@@ -374,37 +414,42 @@
       "actions": [
         {
           "id": "dev",
-          "label": "Dev server",
+          "label": "Start dev server",
           "kind": "npm",
           "run": "dev",
           "long": true,
-          "primary": true
+          "primary": true,
+          "info": "Runs Angelita's flight portal locally at localhost:3000. Keeps running until you Stop it."
         },
         {
           "id": "build",
-          "label": "Build",
+          "label": "Build for production",
           "kind": "npm",
-          "run": "build"
+          "run": "build",
+          "info": "Compiles the portal for deployment."
         },
         {
           "id": "start",
-          "label": "Start",
+          "label": "Start (production)",
           "kind": "npm",
           "run": "start",
-          "long": true
+          "long": true,
+          "info": "Serves the built portal at localhost:3000. Keeps running until you Stop it."
         },
         {
           "id": "test",
-          "label": "Test",
+          "label": "Run tests",
           "kind": "npm",
-          "run": "test"
+          "run": "test",
+          "info": "Runs the Vitest test suite."
         },
         {
           "id": "test-watch",
-          "label": "Test (watch)",
+          "label": "Run tests (watch)",
           "kind": "npm",
           "run": "test:watch",
-          "long": true
+          "long": true,
+          "info": "Re-runs tests as files change. Keeps running until you Stop it."
         }
       ]
     },
@@ -427,18 +472,20 @@
       "actions": [
         {
           "id": "generate",
-          "label": "Generate briefing",
+          "label": "Generate CEO briefing draft",
           "kind": "shell",
           "run": "scripts/cron1-generate-briefing.sh",
           "sensitive": true,
-          "primary": true
+          "primary": true,
+          "info": "Reads all project files + Gmail, builds the Monday CEO briefing and emails the draft to you for approval."
         },
         {
           "id": "monitor",
-          "label": "Monitor reply",
+          "label": "Check approval & send to CEO",
           "kind": "shell",
           "run": "scripts/cron2-monitor-reply.sh",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Looks for your approval reply, then publishes and emails the final briefing to the CEO."
         }
       ]
     },
@@ -461,40 +508,45 @@
       "actions": [
         {
           "id": "test-connection",
-          "label": "Test connection",
+          "label": "Test Mews connection",
           "kind": "npm",
           "run": "test:connection",
-          "cwd": "Mews_Demo_Test"
+          "cwd": "Mews_Demo_Test",
+          "info": "Checks that the Mews API credentials are working."
         },
         {
           "id": "test-resources",
-          "label": "Get resources",
+          "label": "List Mews resources",
           "kind": "npm",
           "run": "test:resources",
-          "cwd": "Mews_Demo_Test"
+          "cwd": "Mews_Demo_Test",
+          "info": "Fetches the resources (spaces/units) available in Mews."
         },
         {
           "id": "probe",
-          "label": "Probe",
+          "label": "Explore the Mews API",
           "kind": "npm",
           "run": "probe",
           "cwd": "Mews_Demo_Test",
-          "primary": true
+          "primary": true,
+          "info": "Probes the Mews API to map fields and endpoints for the migration."
         },
         {
           "id": "inspect",
-          "label": "Inspect",
+          "label": "Inspect Mews data",
           "kind": "npm",
           "run": "inspect",
-          "cwd": "Mews_Demo_Test"
+          "cwd": "Mews_Demo_Test",
+          "info": "Examines the reservation/customer data structures Mews returns."
         },
         {
           "id": "test-reservation",
-          "label": "Test reservation",
+          "label": "Create a test reservation",
           "kind": "npm",
           "run": "test:reservation",
           "cwd": "Mews_Demo_Test",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Creates a test reservation in Mews — writes to the live system."
         }
       ]
     },
@@ -508,10 +560,11 @@
       "actions": [
         {
           "id": "test",
-          "label": "Run tests",
+          "label": "Run tests (pytest)",
           "kind": "python",
           "run": "-m pytest",
-          "cwd": "engine"
+          "cwd": "engine",
+          "info": "Runs the 59-test SES.Hospedajes engine suite."
         }
       ]
     },
@@ -543,31 +596,35 @@
       "actions": [
         {
           "id": "brief",
-          "label": "Crew brief",
+          "label": "Run full pre-flight briefing",
           "kind": "shell",
           "run": "crewbrief.sh",
           "sensitive": true,
-          "primary": true
+          "primary": true,
+          "info": "Logs in, downloads the Binter crew PDF, extracts weather & NOTAMs, and emails you the complete pre-flight briefing."
         },
         {
           "id": "briefing",
-          "label": "Full briefing",
+          "label": "Run scheduled briefing now",
           "kind": "shell",
           "run": "crewbrief_briefing.sh",
-          "sensitive": true
+          "sensitive": true,
+          "info": "The same briefing in the self-removing form the scheduler fires ~90 min before departure."
         },
         {
           "id": "main",
-          "label": "Run main.py",
+          "label": "Run pipeline (raw)",
           "kind": "python",
           "run": "main.py",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Runs the Python pipeline directly, without the iCloud-safe wrapper. For debugging."
         },
         {
           "id": "scheduler",
-          "label": "Scheduler",
+          "label": "Schedule next briefing",
           "kind": "python",
-          "run": "scheduler.py"
+          "run": "scheduler.py",
+          "info": "Sets up the timed job that auto-sends your briefing before the next flight."
         }
       ]
     },
@@ -581,69 +638,78 @@
       "actions": [
         {
           "id": "digest",
-          "label": "Digest",
+          "label": "Send schedule digest",
           "kind": "shell",
           "run": "Herramientas/digest/digest.sh",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Emails you a digest of your upcoming Binter schedule."
         },
         {
           "id": "capture",
-          "label": "Capture inbox",
+          "label": "Capture Binter inbox",
           "kind": "shell",
           "run": "Herramientas/_capture/capture.sh",
-          "primary": true
+          "primary": true,
+          "info": "Reads new Binter Gmail messages and files/classifies them into the flight bag."
         },
         {
           "id": "download",
-          "label": "Binter download",
+          "label": "Download from Binter portal",
           "kind": "shell",
           "run": "Herramientas/binter_portal/download.sh",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Logs in to the Binter crew portal and downloads the latest documents."
         },
         {
           "id": "promote",
-          "label": "Promote revision",
+          "label": "Promote latest revision",
           "kind": "shell",
           "run": "Herramientas/binter_portal/promote_revision.sh",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Marks the freshly downloaded document revision as the active one."
         },
         {
           "id": "transfer",
           "label": "Transfer highlights",
           "kind": "shell",
-          "run": "Herramientas/highlights/transfer.sh"
+          "run": "Herramientas/highlights/transfer.sh",
+          "info": "Moves your highlighted items into the Monday manual mirror."
         },
         {
           "id": "job-digest",
-          "label": "Digest job (PM)",
+          "label": "Schedule digest (evening)",
           "kind": "launchd",
           "run": "Herramientas/digest/com.flightbag.digest.plist",
           "service": "com.flightbag.digest",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Background job: sends the schedule digest at 18:00."
         },
         {
           "id": "job-digest-am",
-          "label": "Digest job (AM)",
+          "label": "Schedule digest (morning)",
           "kind": "launchd",
           "run": "Herramientas/digest/com.flightbag.digest-am.plist",
           "service": "com.flightbag.digest-am",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Background job: sends the digest at 05:30 on work days."
         },
         {
           "id": "job-binter",
-          "label": "Binter portal job",
+          "label": "Binter download (scheduled)",
           "kind": "launchd",
           "run": "Herramientas/binter_portal/com.flightbag.binter-portal.plist",
           "service": "com.flightbag.binter-portal",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Background job: auto-downloads from the Binter portal."
         },
         {
           "id": "job-capture",
-          "label": "Capture job",
+          "label": "Inbox capture (scheduled)",
           "kind": "launchd",
           "run": "Herramientas/_capture/com.flightbag.capture.plist",
           "service": "com.flightbag.capture",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Background job: auto-captures the Binter inbox daily."
         }
       ]
     },
@@ -657,59 +723,67 @@
       "actions": [
         {
           "id": "roster",
-          "label": "Get roster",
+          "label": "Download my roster",
           "kind": "npm",
           "run": "roster",
           "sensitive": true,
-          "primary": true
+          "primary": true,
+          "info": "Logs in to eCrew and downloads + parses your monthly roster PDF (flights and standby duties)."
         },
         {
           "id": "dev",
-          "label": "Dev",
+          "label": "Run MCP server (dev)",
           "kind": "npm",
           "run": "dev",
-          "long": true
+          "long": true,
+          "info": "Runs the eCrew MCP server in watch mode. Keeps running until you Stop it."
         },
         {
           "id": "start",
-          "label": "Start MCP",
+          "label": "Start MCP server",
           "kind": "npm",
           "run": "start",
-          "long": true
+          "long": true,
+          "info": "Runs the built eCrew MCP server so Claude can use it. Keeps running until you Stop it."
         },
         {
           "id": "build",
           "label": "Build",
           "kind": "npm",
-          "run": "build"
+          "run": "build",
+          "info": "Compiles the TypeScript MCP server."
         },
         {
           "id": "test",
-          "label": "Test",
+          "label": "Run tests",
           "kind": "npm",
-          "run": "test"
+          "run": "test",
+          "info": "Runs the eCrew test suite."
         },
         {
           "id": "prewarm",
-          "label": "Prewarm",
+          "label": "Pre-warm eCrew login",
           "kind": "shell",
           "run": "prewarm.sh",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Logs in ahead of time so the next roster download is fast."
         },
         {
           "id": "mcp-sh",
-          "label": "Start MCP (sh)",
+          "label": "Start MCP server (script)",
           "kind": "shell",
           "run": "ecrew-mcp.sh",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Starts the MCP server via its shell wrapper. Keeps running until you Stop it."
         },
         {
           "id": "job-prewarm",
-          "label": "Prewarm job",
+          "label": "Pre-warm login (scheduled)",
           "kind": "launchd",
           "run": "launchd/com.ecrew.prewarm.plist",
           "service": "com.ecrew.prewarm",
-          "sensitive": true
+          "sensitive": true,
+          "info": "Background job: keeps the eCrew login warm."
         }
       ]
     }

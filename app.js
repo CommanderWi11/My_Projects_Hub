@@ -318,6 +318,22 @@ function renderAction(p, a, isPrimary) {
   return a.kind === "launchd" ? jobControl(p, a) : actButton(p, a, isPrimary);
 }
 
+function infoIcon(text) {
+  const s = document.createElement("span");
+  s.className = "info";
+  s.tabIndex = 0;
+  s.setAttribute("role", "button");
+  s.setAttribute("aria-label", text);
+  s.textContent = "i";
+  const tip = document.createElement("span");
+  tip.className = "tip";
+  tip.textContent = text;
+  s.appendChild(tip);
+  // clicking the icon must NOT run the action; toggle for touch screens
+  s.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); s.classList.toggle("show"); });
+  return s;
+}
+
 function actButton(p, a, isPrimary) {
   const b = document.createElement("button");
   b.className = "act" + (isPrimary ? " act-primary" : "") + (a.long ? " long" : "") + (a.sensitive ? " sensitive" : "");
@@ -332,17 +348,26 @@ function actButton(p, a, isPrimary) {
     b.title = "Local-only — run this on the Mac";
     b.classList.add("locked-action");
   } else {
-    b.title = (a.long ? "Start (long-running): " : "Run: ") + a.label + (a.sensitive ? "  (sensitive)" : "");
+    b.title = (a.long ? "Start (long-running): " : "Run: ") + a.label;
     b.addEventListener("click", () => onRun(p, a, b));
   }
-  return b;
+  if (!a.info) return b;
+  const wrap = document.createElement("span");
+  wrap.className = "act-wrap" + (isPrimary ? " act-wrap-primary" : "");
+  wrap.appendChild(b);
+  wrap.appendChild(infoIcon(a.info));
+  return wrap;
 }
 
 function jobControl(p, a) {
   const wrap = document.createElement("div");
   wrap.className = "job" + (a.sensitive ? " sensitive" : "");
   wrap.title = "launchd · " + (a.service || a.label);
-  wrap.innerHTML = '<span class="job-label"><span class="dot"></span>' + esc(a.label) + '</span>';
+  const label = document.createElement("span");
+  label.className = "job-label";
+  label.innerHTML = '<span class="dot"></span>' + esc(a.label);
+  if (a.info) label.appendChild(infoIcon(a.info));
+  wrap.appendChild(label);
   const ops = [["kickstart", "Run"], ["load", "On"], ["unload", "Off"]];
   for (const [op, lbl] of ops) {
     const btn = document.createElement("button");
