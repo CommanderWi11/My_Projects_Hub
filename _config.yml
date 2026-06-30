@@ -8,6 +8,8 @@ exclude:
   - projects.json
   - launcher.mjs
   - setup-auth.mjs
+  - setup-smtp.mjs
+  - set-password.html
   - com.commanderwi11.projects-hub.plist
   - .env.example
   - .env

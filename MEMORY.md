@@ -12,14 +12,22 @@ Index + one-click launcher for every project. Same code, three contexts:
 - **Remote** https://bobmac.tail6dba15.ts.net (Tailscale Funnel) — login + TOTP; sensitive blocked.
 - **Public** https://commanderwi11.github.io/My_Projects_Hub/ — minimalist landing only.
 
-## ⚠ Two user actions to finish remote access
-1. **Enable Tailscale Funnel** (one-time, admin console):
-   https://login.tailscale.com/f/funnel?node=nNLyPLWnM911CNTRL
-   then: `/Applications/Tailscale.app/Contents/MacOS/Tailscale funnel --bg 4317`
-2. **Set credentials**: in the hub folder run `node setup-auth.mjs`, scan the TOTP
-   secret into an authenticator, then
-   `launchctl kickstart -k gui/$(id -u)/com.commanderwi11.projects-hub`
-Then open https://bobmac.tail6dba15.ts.net on any device → log in.
+## Remote access — LIVE (2026-06-30)
+- ✅ Tailscale Funnel running: https://bobmac.tail6dba15.ts.net → 127.0.0.1:4317
+  (persists across reboot; `tailscale funnel --https=443 off` to disable).
+- ✅ Auth configured. Username = **luisnavm@gmx.com**. TOTP = the ORIGINAL secret
+  (restored after a rotation; matches the authenticator Luis already has).
+- ✅ End-to-end verified over the public URL: login (pwd+TOTP) → run → stream → exit;
+  sensitive action correctly blocked 403 remote.
+- Secrets in ~/.config/my-projects-hub/.env. NOT in git/chat.
+
+## Password by email (set/reset link) — GMX SMTP
+- Feature built: login page has "Email me a set-password link" → emails a 20-min,
+  single-use link (set-password.html?token=…) from luisnavm@gmx.com to itself.
+- ⚠ LAST STEP to enable it: get a GMX app-password, then run `node setup-smtp.mjs`
+  (enter it privately) → `launchctl kickstart -k gui/$(id -u)/com.commanderwi11.projects-hub`.
+- Sender = personal luisnavm@gmx.com only (no Airnest/professional addresses).
+- Current password is whatever was last set; use the email link to set a known one.
 
 ## Key facts
 - This Mac on Tailscale = node **bobmac** (100.114.123.54), tailnet `tail6dba15.ts.net`.

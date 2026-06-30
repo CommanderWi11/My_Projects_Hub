@@ -16,7 +16,7 @@ const $ = (id) => document.getElementById(id);
 const els = {
   gate: $("gate"), gateKicker: $("gate-kicker"), gateTitle: $("gate-title"), gateNote: $("gate-note"),
   loginForm: $("login-form"), lgUser: $("lg-user"), lgPass: $("lg-pass"), lgTotp: $("lg-totp"),
-  gateAction: $("gate-action"), gateErr: $("gate-error"),
+  gateAction: $("gate-action"), gateErr: $("gate-error"), resetLink: $("reset-link"),
   app: $("app"), groups: $("groups"), empty: $("empty"), count: $("count"), introSub: $("intro-sub"),
   search: $("search"), filters: $("filters"),
   status: $("launcher-status"), themeToggle: $("theme-toggle"), logoutBtn: $("logout-btn"),
@@ -28,6 +28,7 @@ const els = {
 
 let MODE = "static";      // "live" once launcher responds
 let REMOTE = false;       // true when served via the Funnel
+let HEALTH = null;        // last /api/health payload
 let CSRF = null;          // CSRF token from login (remote)
 let PROJECTS = [];
 let FILTER_HQ = "all";
@@ -52,6 +53,7 @@ init();
 async function init() {
   const health = await probeLauncher();
   if (!health) { MODE = "static"; return showLanding(); }
+  HEALTH = health;
 
   MODE = "live";
   REMOTE = !!health.remote;
@@ -110,6 +112,7 @@ function showLogin(configured) {
     els.gateTitle.textContent = "Sign in";
     els.gateNote.textContent = "Enter your credentials and the 6-digit code from your authenticator app.";
     els.loginForm.hidden = false;
+    els.resetLink.hidden = !(HEALTH && HEALTH.emailConfigured);
     setTimeout(() => els.lgUser.focus(), 60);
   } else {
     els.gateKicker.textContent = "Setup required";
@@ -152,6 +155,24 @@ els.loginForm.addEventListener("submit", async (e) => {
 els.logoutBtn.addEventListener("click", async () => {
   try { await fetch("api/logout", { method: "POST" }); } catch (e) {}
   location.reload();
+});
+
+els.resetLink.addEventListener("click", async () => {
+  els.gateErr.hidden = true;
+  els.resetLink.disabled = true;
+  const orig = els.resetLink.textContent;
+  els.resetLink.textContent = "Sending…";
+  try {
+    const res = await fetch("api/request-reset", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+    const j = await res.json();
+    if (!res.ok || !j.ok) throw new Error(j.error || "Could not send link");
+    els.resetLink.textContent = "✓ Link sent — check your email";
+  } catch (e) {
+    els.gateErr.textContent = e.message || "Could not send link";
+    els.gateErr.hidden = false;
+    els.resetLink.textContent = orig;
+    els.resetLink.disabled = false;
+  }
 });
 
 // ════════════════════════════════════════════════════════════

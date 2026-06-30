@@ -22,11 +22,12 @@
 
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { spawn, execFile } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join, resolve, extname, basename, normalize } from "node:path";
-import { randomUUID, createHmac, scryptSync, timingSafeEqual } from "node:crypto";
+import { randomUUID, createHmac, scryptSync, timingSafeEqual, randomBytes } from "node:crypto";
+import tls from "node:tls";
 import os from "node:os";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -66,6 +67,17 @@ function loadConfig() {
 }
 const { file: ENV_FILE, cfg: CFG } = loadConfig();
 const AUTH_ON = !!(CFG.HUB_USERNAME && CFG.HUB_PASSWORD_HASH && CFG.HUB_PASSWORD_SALT && CFG.SESSION_SECRET && CFG.TOTP_SECRET);
+
+// Email (GMX SMTP) — used for the "set/reset password via link" flow.
+const SMTP = {
+  host: CFG.SMTP_HOST || "mail.gmx.com",
+  port: CFG.SMTP_PORT || "465",
+  user: CFG.SMTP_USER,
+  pass: CFG.SMTP_PASS,
+  from: CFG.MAIL_FROM || CFG.SMTP_USER,
+  to: CFG.MAIL_TO || CFG.SMTP_USER || CFG.HUB_USERNAME,
+};
+const EMAIL_ON = !!(SMTP.host && SMTP.user && SMTP.pass && SMTP.to);
 
 // ── crypto helpers ──────────────────────────────────────────
 function safeEqStr(a, b) {
@@ -122,8 +134,88 @@ function totpVerify(secret, token) {
   return false;
 }
 
+// ── password reset (emailed link) ───────────────────────────
+const usedResetNonces = new Set();
+function updateEnvFile(kv) {
+  let lines = existsSync(ENV_FILE) ? readFileSync(ENV_FILE, "utf8").split("\n") : [];
+  for (const [k, v] of Object.entries(kv)) {
+    let done = false;
+    lines = lines.map((l) => (l.startsWith(k + "=") ? ((done = true), k + "=" + v) : l));
+    if (!done) lines.push(k + "=" + v);
+  }
+  writeFileSync(ENV_FILE, lines.join("\n"), { mode: 0o600 });
+}
+function setNewPassword(pw) {
+  const salt = randomBytes(16).toString("hex");
+  const hash = scryptSync(pw, Buffer.from(salt, "hex"), 64).toString("hex");
+  updateEnvFile({ HUB_PASSWORD_SALT: salt, HUB_PASSWORD_HASH: hash });
+  CFG.HUB_PASSWORD_SALT = salt; CFG.HUB_PASSWORD_HASH = hash;
+}
+function makeResetToken() {
+  const exp = Date.now() + 20 * 60 * 1000;
+  const nonce = randomBytes(9).toString("base64url");
+  return exp + "." + nonce + "." + createHmac("sha256", CFG.SESSION_SECRET).update("reset:" + exp + ":" + nonce).digest("hex");
+}
+function verifyResetToken(tok) {
+  const p = String(tok || "").split(".");
+  if (p.length !== 3) return false;
+  const [exp, nonce, sig] = p;
+  if (usedResetNonces.has(nonce)) return false;
+  if (!safeEqStr(sig, createHmac("sha256", CFG.SESSION_SECRET).update("reset:" + exp + ":" + nonce).digest("hex"))) return false;
+  if (Number(exp) < Date.now()) return false;
+  return nonce;
+}
+
+// ── email via SMTP over TLS (implicit, port 465) ────────────
+function mimeMessage({ from, to, subject, text, html }) {
+  const b = "mph_" + randomBytes(8).toString("hex");
+  return [
+    "From: " + from, "To: " + to, "Subject: " + subject, "MIME-Version: 1.0",
+    'Content-Type: multipart/alternative; boundary="' + b + '"', "Date: " + new Date().toUTCString(), "",
+    "--" + b, "Content-Type: text/plain; charset=utf-8", "", text, "",
+    "--" + b, "Content-Type: text/html; charset=utf-8", "", html, "",
+    "--" + b + "--", "",
+  ].join("\r\n");
+}
+function sendMail({ subject, text, html }) {
+  const steps = [
+    { expect: 220 },
+    { cmd: "EHLO localhost", expect: 250 },
+    { cmd: "AUTH LOGIN", expect: 334 },
+    { cmd: Buffer.from(SMTP.user).toString("base64"), expect: 334 },
+    { cmd: Buffer.from(SMTP.pass).toString("base64"), expect: 235 },
+    { cmd: "MAIL FROM:<" + SMTP.from + ">", expect: 250 },
+    { cmd: "RCPT TO:<" + SMTP.to + ">", expect: 250 },
+    { cmd: "DATA", expect: 354 },
+    { cmd: mimeMessage({ from: SMTP.from, to: SMTP.to, subject, text, html }) + "\r\n.", expect: 250 },
+    { cmd: "QUIT", expect: 221 },
+  ];
+  return new Promise((resolve, reject) => {
+    const sock = tls.connect({ host: SMTP.host, port: Number(SMTP.port), servername: SMTP.host });
+    sock.setEncoding("utf8");
+    let i = 0, buf = "";
+    const fail = (m) => { try { sock.destroy(); } catch {} reject(new Error(m)); };
+    sock.setTimeout(20000, () => fail("SMTP timeout"));
+    sock.on("error", (e) => fail("SMTP socket: " + e.message));
+    sock.on("data", (d) => {
+      buf += d; let idx;
+      while ((idx = buf.indexOf("\r\n")) >= 0) {
+        const line = buf.slice(0, idx); buf = buf.slice(idx + 2);
+        if (/^\d{3}-/.test(line)) continue; // multiline continuation
+        const code = parseInt(line.slice(0, 3), 10);
+        const step = steps[i];
+        if (step.expect && code !== step.expect) return fail("SMTP step " + i + " expected " + step.expect + ", got: " + line);
+        i++;
+        if (i >= steps.length) { resolve(true); try { sock.end(); } catch {} return; }
+        if (steps[i].cmd !== undefined) sock.write(steps[i].cmd + "\r\n");
+      }
+    });
+  });
+}
+
 // ── login rate limiting ─────────────────────────────────────
 const attempts = new Map(); // ip -> { n, until }
+const resetAttempts = new Map(); // ip -> { n, until }
 function clientIp(req) { return (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || req.socket.remoteAddress || "?"; }
 function rlAllowed(ip) { const a = attempts.get(ip); return !(a && a.until > Date.now()); }
 function rlFail(ip) { const a = attempts.get(ip) || { n: 0, until: 0 }; a.n++; if (a.n >= LOCK_MAX) { a.until = Date.now() + LOCK_MS; a.n = 0; } attempts.set(ip, a); }
@@ -274,6 +366,7 @@ function makeServer(port) {
       if (path === "/api/health") {
         return json(res, 200, {
           ok: true, version: VERSION, remote, authConfigured: AUTH_ON, authed,
+          emailConfigured: EMAIL_ON,
           workspaceRoot: remote ? undefined : WORKSPACE_ROOT,
         });
       }
@@ -292,6 +385,40 @@ function makeServer(port) {
         return json(res, 200, { ok: true, csrf: csrfFor(sess) });
       }
       if (path === "/api/logout" && req.method === "POST") { clearSessionCookie(res); return json(res, 200, { ok: true }); }
+
+      // public: email me a set-password link
+      if (path === "/api/request-reset" && req.method === "POST") {
+        if (!AUTH_ON) return json(res, 400, { error: "auth not configured" });
+        if (!EMAIL_ON) return json(res, 503, { error: "email not configured on the server" });
+        const ip = clientIp(req);
+        const ra = resetAttempts.get(ip) || { n: 0, until: 0 };
+        if (ra.until > Date.now()) return json(res, 429, { error: "too many requests — try again later" });
+        const proto = isHttps(req, remote) ? "https" : "http";
+        const link = proto + "://" + req.headers.host + "/set-password.html?token=" + encodeURIComponent(makeResetToken());
+        try {
+          await sendMail({
+            subject: "Set your Projects Hub password",
+            text: "Open this link to set a new password (valid 20 minutes):\n\n" + link + "\n\nIf you didn't request this, ignore this email.",
+            html: '<p>Open this link to set a new Projects Hub password (valid 20 minutes):</p>'
+              + '<p><a href="' + link + '">Set my password</a></p>'
+              + '<p style="color:#888;font-size:12px">If you didn\'t request this, you can ignore this email.</p>',
+          });
+        } catch (e) { return json(res, 500, { error: "could not send email: " + e.message }); }
+        ra.n++; if (ra.n >= 3) ra.until = Date.now() + 10 * 60 * 1000;
+        resetAttempts.set(ip, ra);
+        return json(res, 200, { ok: true });
+      }
+      // public (token-gated): set a new password
+      if (path === "/api/set-password" && req.method === "POST") {
+        if (!AUTH_ON) return json(res, 400, { error: "auth not configured" });
+        const b = await readBody(req);
+        const nonce = verifyResetToken(b.token);
+        if (!nonce) return json(res, 400, { error: "invalid or expired link" });
+        if (!b.password || String(b.password).length < 8) return json(res, 400, { error: "password must be at least 8 characters" });
+        setNewPassword(String(b.password));
+        usedResetNonces.add(nonce);
+        return json(res, 200, { ok: true });
+      }
 
       // everything below requires auth (remote) or is open (local)
       if (remote && !AUTH_ON) return json(res, 503, { error: "auth not configured — set it up before remote use" });

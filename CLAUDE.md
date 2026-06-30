@@ -21,6 +21,8 @@ Mac. No Airnest infra.
 | `projects.json` | **Source of truth** — projects + runnable actions (+ `sensitive` flags). Not public. |
 | `launcher.mjs` | Zero-dependency Node server: serves the UI + runs whitelisted actions; auth, CSRF, lockout. |
 | `setup-auth.mjs` | One-time: generates password hash + TOTP secret → `~/.config/my-projects-hub/.env`. |
+| `setup-smtp.mjs` | One-time: stores GMX SMTP creds (for the emailed set-password link). |
+| `set-password.html` | Page opened from the emailed reset link to set a new password. |
 | `.env.example` | Reference for the secrets file (real secrets live outside the repo). |
 | `com.commanderwi11.projects-hub.plist` | launchd auto-start (keeps the launcher running). |
 | `Launch Hub.command` | Double-click to start the launcher locally. |
@@ -65,6 +67,12 @@ Top level: `{ version, projects: [...] }`. Each project:
 `GET /health` (public) · `POST /login` `{username,password,totp}` → cookie + `{csrf}` ·
 `POST /logout` · `POST /run` `{projectId,actionId,op?}` (auth+CSRF; sensitive blocked remote) →
 `{runId}` · `GET /stream?runId=` (SSE) · `POST /stop` `{runId}`.
+
+**Password set/reset by email (GMX SMTP):** `POST /request-reset` (public, rate-limited) emails
+`MAIL_TO` a tokenized link `set-password.html?token=…` (HMAC-signed, 20-min, single-use);
+`POST /set-password` `{token,password}` writes a new scrypt hash to the env file + in-memory.
+Configure the sender with `setup-smtp.mjs` (SMTP_HOST/PORT/USER/PASS, MAIL_FROM/TO). Email is
+sent via a tiny built-in SMTP-over-TLS client (port 465) — still zero-dependency.
 
 ## Extending — built for future capabilities
 Keep these extension points clean when adding features:
