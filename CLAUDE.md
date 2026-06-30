@@ -1,44 +1,82 @@
 # My Projects Hub — Project Instructions
 
-A single, password-gated webpage that lists every project Luis has with a deployed URL, grouped by HQ (Personal / Airnest / Pilot). Acts as a personal table of contents across all three workstations.
+A password-gated webpage that indexes every project across all three HQs **and**
+acts as a one-click launcher for their scripts and automations. Hybrid by design:
 
-## Scope
+- Opened via the **local launcher** (`node launcher.mjs`, or double-click
+  `Launch Hub.command`) → buttons actually run commands on this Mac.
+- Deployed to **GitHub Pages** → same page, but executable buttons are disabled
+  (with a hint) and only the "Open" links work.
 
-- Maintain a clean index of all live project URLs
-- Add a new entry whenever a project ships a deployed URL
-- Keep the gate simple (client-side password, sessionStorage)
+## Files
 
-## Startup
+| File | Role |
+|---|---|
+| `index.html` | Markup: topbar, gate, app shell, output drawer. |
+| `styles.css` | Minimalist "console" theme — light + dark via `[data-theme]`, one green accent. |
+| `app.js` | Gate, theme toggle, rendering, hybrid detection, run/stop/launchd, SSE streaming. |
+| `projects.json` | **Source of truth** — every project + its runnable actions. |
+| `launcher.mjs` | Zero-dependency Node server: serves the hub + runs whitelisted actions. |
+| `Launch Hub.command` | Double-click to start the launcher and open the browser. |
 
-Read on entry:
-1. This file
-2. `MEMORY.md` — current status, deployed URL, password
-3. `projects.json` — the canonical list of project links
+## House Style — minimalist console (since 2026-06-30)
 
-## House Style — "Night Ledger" (since 2026-05-23)
+Replaced the old "Night Ledger" editorial look. Clean, neutral, lots of
+whitespace, hairline borders, a single green accent (run / connected semantics).
+Fonts: **Bricolage Grotesque** (display), **Hanken Grotesk** (body),
+**IBM Plex Mono** (labels, commands, tags). Light + dark with a header toggle;
+defaults to system preference, remembers choice in `localStorage` (`mph_theme`).
 
-Matches the Shared·Airnest portal aesthetic: dark warm-near-black background,
-parchment text, ember accent, Instrument Serif display / Hanken Grotesk body /
-IBM Plex Mono labels, paper-grain + vignette atmosphere.
+## Working Style — adding / changing projects
 
-- Markup lives in `index.html`; styling in `styles.css`; row rendering in
-  `script.js`. The visual language is one-to-one with
-  `02_Airnest_HQ/Projects/Shared_Airnest/index.html` — when in doubt, mirror
-  its tokens / spacing.
-- Each HQ is a `band` (`hq-personal`, `hq-airnest`, `hq-pilot`). Personal is
-  highlighted ember; the others use paper / faint marks.
-- Project rows reuse the ledger row pattern: ember chip + serif title + mono
-  URL + host tag + arrow.
+**Edit `projects.json` only.** No HTML/CSS per project. Schema:
 
-## Working Style
+```jsonc
+{
+  "hq": "personal | airnest | pilot",
+  "id": "kebab-slug",            // stable; used by the launcher to whitelist
+  "name": "Display Name",
+  "url": "https://…",           // the "Open" button
+  "desc": "one-line description",
+  "path": "01_Personal_HQ/Projects/.../Dir",   // local path, relative to workspace root
+  "actions": [
+    { "id": "sync", "label": "Sync portals", "kind": "npm",    "run": "sync" },
+    { "id": "x",    "label": "Run x",         "kind": "node",   "run": "scripts/x.mjs" },
+    { "id": "y",    "label": "Run y",         "kind": "python", "run": "main.py", "cwd": "engine" },
+    { "id": "z",    "label": "Do z",          "kind": "shell",  "run": "scripts/z.sh", "long": true },
+    { "id": "job",  "label": "Nightly",       "kind": "launchd","run": "x.plist", "service": "com.foo.x" }
+  ]
+}
+```
 
-- **Adding a project = edit `projects.json` only.** No HTML or CSS changes per
-  project. `script.js` does all the row rendering from JSON.
-- Commit & push to `main`; GitHub Pages redeploys automatically.
-- Style changes go in `styles.css`; never inline per-row styles.
+- `kind`: `npm` (→ `npm run <run>`), `node` (→ `node <run>`), `python`
+  (→ venv python if found, else `python3`; `run` may be `-m pytest`),
+  `shell` (→ `bash <run>`), `launchd` (→ `launchctl load/unload/kickstart`).
+- `cwd` (optional): subdir under `path`. For file actions without `cwd`, the
+  command runs from the script's own directory.
+- `long: true`: long-running (dev servers, dashboards) — button stays active;
+  Stop in the drawer kills the process group. The drawer auto-detects a
+  printed `localhost:PORT` and shows a clickable link.
+- Projects with no local actions just show the "Open" link.
+
+## Launcher (`launcher.mjs`)
+
+- Resolves the workspace root as three levels up from this folder (override with
+  `WORKSPACE_ROOT`). Default port `4317` (override with `--port` / `PORT`).
+- **Security:** binds to `127.0.0.1` only; executes **only** actions defined in
+  `projects.json` (never arbitrary commands); rejects `/api` requests whose
+  `Origin` isn't the localhost hub.
+- API: `GET /api/health`, `POST /api/run {projectId,actionId,op?}` → `{runId}`,
+  `GET /api/stream?runId=` (SSE), `POST /api/stop {runId}`.
+
+## Deploy
+
+- Commit & push to `main`; GitHub Pages redeploys (static index, buttons
+  disabled). The launcher is **local only** — never deployed, never network-exposed.
 
 ## Rules
 
-- Password gate is client-side only; never put truly sensitive URLs here
-- Don't expose tokens, internal endpoints, or PII in `projects.json`
-- Group by HQ in order: Personal → Airnest → Pilot
+- Password gate is client-side only; don't put truly sensitive URLs here.
+- Don't expose tokens, internal endpoints, or PII in `projects.json`.
+- Group/render order: Personal → Airnest → Pilot.
+- Never add an action that points outside the workspace root.
