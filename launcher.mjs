@@ -50,7 +50,18 @@ const MIME = {
 // Only these files are ever served as static assets. Everything else (source,
 // docs, setup scripts, plist, .env*) is never exposed — even locally — so the
 // public Funnel can't fetch them. projects.json is handled separately (auth-gated).
-const PUBLIC_STATIC = new Set(["/index.html", "/styles.css", "/app.js", "/set-password.html", "/favicon.ico"]);
+const PUBLIC_STATIC = new Set(["/index.html", "/styles.css", "/app.js", "/theme.js", "/set-password.html", "/set-password.js", "/favicon.ico"]);
+
+// Strict CSP — first-party scripts only (all inline JS is externalized), Google
+// Fonts allowed for styles/fonts, no framing (anti-clickjacking).
+const CSP = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'";
+function setSecurityHeaders(res) {
+  res.setHeader("Content-Security-Policy", CSP);
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+}
 
 // ── config / secrets (outside the iCloud repo) ──────────────
 function loadConfig() {
@@ -364,6 +375,7 @@ function makeServer(port) {
     // genuine local request is one with NO forwarding headers and a loopback Host.
     const proxied = !!(req.headers["x-forwarded-for"] || req.headers["x-forwarded-proto"] || req.headers["x-forwarded-host"]);
     const remote = proxied || !isLocalHost(hostOf(req));
+    setSecurityHeaders(res);
     const cookies = parseCookies(req);
     const authed = remote ? (AUTH_ON && verifySession(cookies.mph_session)) : true;
 
@@ -417,7 +429,7 @@ function makeServer(port) {
               + '<p><a href="' + link + '">Set my password</a></p>'
               + '<p style="color:#888;font-size:12px">If you didn\'t request this, you can ignore this email.</p>',
           });
-        } catch (e) { return json(res, 500, { error: "could not send email: " + e.message }); }
+        } catch (e) { console.error("[request-reset] email failed:", e.message); return json(res, 500, { error: "could not send email" }); }
         ra.n++; if (ra.n >= 3) ra.until = Date.now() + 10 * 60 * 1000;
         resetAttempts.set(ip, ra);
         return json(res, 200, { ok: true });

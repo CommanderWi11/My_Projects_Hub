@@ -10,6 +10,7 @@ exclude:
   - setup-auth.mjs
   - setup-smtp.mjs
   - set-password.html
+  - set-password.js
   - com.commanderwi11.projects-hub.plist
   - .env.example
   - .env
