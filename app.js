@@ -1,37 +1,38 @@
 /* ============================================================
-   Projects Hub — client logic
-   - password gate (sessionStorage)
+   Projects Hub — client logic (v3, authenticated)
    - light/dark theme toggle (localStorage, system default)
-   - renders cards + action buttons from projects.json
-   - hybrid: live execution via local launcher API, or static fallback
+   - three contexts:
+       LOCAL  (served by launcher on localhost)  → straight in, all actions
+       REMOTE (served via Tailscale Funnel)       → login (user+pass+TOTP); sensitive hidden
+       STATIC (GitHub Pages, no launcher)         → minimalist landing only
+   - renders cards + action buttons from projects.json, streams output via SSE
    ============================================================ */
 
-const PASSWORD = "airnest2020";
-const UNLOCK_KEY = "mph_unlocked";
 const THEME_KEY = "mph_theme";
-
 const HQ_ORDER = ["personal", "airnest", "pilot"];
 const HQ_LABEL = { personal: "Personal", airnest: "Airnest", pilot: "Pilot" };
 
-// ── element refs ──
 const $ = (id) => document.getElementById(id);
 const els = {
-  gate: $("gate"), gateForm: $("gate-form"), pw: $("pw"), gateErr: $("gate-error"),
-  app: $("app"), groups: $("groups"), empty: $("empty"), count: $("count"),
+  gate: $("gate"), gateKicker: $("gate-kicker"), gateTitle: $("gate-title"), gateNote: $("gate-note"),
+  loginForm: $("login-form"), lgUser: $("lg-user"), lgPass: $("lg-pass"), lgTotp: $("lg-totp"),
+  gateAction: $("gate-action"), gateErr: $("gate-error"),
+  app: $("app"), groups: $("groups"), empty: $("empty"), count: $("count"), introSub: $("intro-sub"),
   search: $("search"), filters: $("filters"),
-  status: $("launcher-status"), themeToggle: $("theme-toggle"),
+  status: $("launcher-status"), themeToggle: $("theme-toggle"), logoutBtn: $("logout-btn"),
   drawer: $("drawer"), drawerOut: $("drawer-out"), runCmd: $("run-cmd"),
   runState: $("run-state"), runStop: $("run-stop"), runClear: $("run-clear"),
   runLink: $("run-link"), drawerClose: $("drawer-close"),
   footHint: $("foot-hint"), toast: $("toast"),
 };
 
-// ── state ──
-let MODE = "static";          // "live" once launcher responds
+let MODE = "static";      // "live" once launcher responds
+let REMOTE = false;       // true when served via the Funnel
+let CSRF = null;          // CSRF token from login (remote)
 let PROJECTS = [];
 let FILTER_HQ = "all";
 let FILTER_Q = "";
-const RUNS = new Map();        // runId -> run record
+const RUNS = new Map();
 let ACTIVE_RUN = null;
 
 // ════════════════════════════════════════════════════════════
@@ -44,38 +45,27 @@ els.themeToggle.addEventListener("click", () => {
 });
 
 // ════════════════════════════════════════════════════════════
-//  Gate
+//  Boot
 // ════════════════════════════════════════════════════════════
-if (sessionStorage.getItem(UNLOCK_KEY) === "1") {
-  unlock();
-} else {
-  els.gate.hidden = false;
-  document.body.classList.add("locked");
+init();
+
+async function init() {
+  const health = await probeLauncher();
+  if (!health) { MODE = "static"; return showLanding(); }
+
+  MODE = "live";
+  REMOTE = !!health.remote;
+
+  if (REMOTE && health.authConfigured && !health.authed) return showLogin(true);
+  if (REMOTE && !health.authConfigured) return showLogin(false);
+
+  // local, or remote already authed
+  setStatus("live", REMOTE ? "Connected · remote" : "Launcher connected");
+  els.footHint.textContent = REMOTE ? "Remote session" : ("Launcher live · " + (health.workspaceRoot || ""));
+  els.logoutBtn.hidden = !REMOTE;
+  await enterApp();
 }
 
-els.gateForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  if (els.pw.value === PASSWORD) {
-    try { sessionStorage.setItem(UNLOCK_KEY, "1"); } catch (e) {}
-    unlock();
-  } else {
-    els.gateErr.hidden = false;
-    els.pw.value = "";
-    els.pw.focus();
-  }
-});
-
-async function unlock() {
-  document.body.classList.remove("locked");
-  els.gate.hidden = true;
-  els.app.hidden = false;
-  await Promise.all([loadProjects(), probeLauncher()]);
-  render();
-}
-
-// ════════════════════════════════════════════════════════════
-//  Launcher detection
-// ════════════════════════════════════════════════════════════
 async function probeLauncher() {
   try {
     const ctrl = new AbortController();
@@ -83,29 +73,101 @@ async function probeLauncher() {
     const res = await fetch("api/health", { signal: ctrl.signal, cache: "no-store" });
     clearTimeout(t);
     const j = await res.json();
-    if (res.ok && j && j.ok) {
-      MODE = "live";
-      setStatus("live", "Launcher connected");
-      els.footHint.textContent = "Launcher live · " + (j.workspaceRoot || "");
-      return;
-    }
-  } catch (e) { /* not running */ }
-  MODE = "static";
-  setStatus("static", "Static mode");
-  els.footHint.textContent = "Run “Launch Hub.command” to enable buttons";
+    return res.ok && j && j.ok ? j : null;
+  } catch (e) { return null; }
 }
 
 function setStatus(cls, text) {
   els.status.className = "status " + cls;
   els.status.querySelector(".status-text").textContent = text;
-  els.status.title = cls === "live"
-    ? "Local launcher is running — buttons execute"
-    : "Open via the local launcher to run scripts";
 }
 
 // ════════════════════════════════════════════════════════════
-//  Data
+//  Gate states
 // ════════════════════════════════════════════════════════════
+function showGate() { document.body.classList.add("locked"); els.gate.hidden = false; els.app.hidden = true; }
+
+function showLanding() {
+  setStatus("static", "Offline");
+  els.footHint.textContent = "Start the launcher on your Mac to sign in";
+  els.gateKicker.textContent = "Projects Hub";
+  els.gateTitle.textContent = "Runs from my Mac";
+  els.gateNote.textContent = "This is a one-click launcher for everything I'm building. It comes online when my Mac is awake and the launcher is running — sign in there to launch scripts and automations.";
+  els.loginForm.hidden = true;
+  // optional deep-link to the launcher if configured in projects.json
+  loadLauncherUrl().then((url) => {
+    if (url) { els.gateAction.hidden = false; els.gateAction.href = url; els.gateAction.textContent = "Open launcher ↗"; }
+  });
+  showGate();
+}
+
+function showLogin(configured) {
+  setStatus("live", "Locked · remote");
+  els.footHint.textContent = "Remote access";
+  els.gateAction.hidden = true;
+  if (configured) {
+    els.gateKicker.textContent = "Restricted · Remote";
+    els.gateTitle.textContent = "Sign in";
+    els.gateNote.textContent = "Enter your credentials and the 6-digit code from your authenticator app.";
+    els.loginForm.hidden = false;
+    setTimeout(() => els.lgUser.focus(), 60);
+  } else {
+    els.gateKicker.textContent = "Setup required";
+    els.gateTitle.textContent = "Not configured";
+    els.gateNote.textContent = "Remote access isn't set up yet. On your Mac, run “node setup-auth.mjs” in the hub folder, then restart the launcher.";
+    els.loginForm.hidden = true;
+  }
+  showGate();
+}
+
+els.loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  els.gateErr.hidden = true;
+  const btn = els.loginForm.querySelector("button");
+  btn.disabled = true; btn.textContent = "Signing in…";
+  try {
+    const res = await fetch("api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: els.lgUser.value, password: els.lgPass.value, totp: els.lgTotp.value }),
+    });
+    const j = await res.json();
+    if (!res.ok || !j.ok) throw new Error(j.error || "Sign in failed");
+    CSRF = j.csrf || null;
+    REMOTE = true;
+    setStatus("live", "Connected · remote");
+    els.footHint.textContent = "Remote session";
+    els.logoutBtn.hidden = false;
+    await enterApp();
+  } catch (err) {
+    els.gateErr.textContent = err.message || "Sign in failed";
+    els.gateErr.hidden = false;
+    els.lgTotp.value = "";
+    els.lgPass.focus();
+  } finally {
+    btn.disabled = false; btn.textContent = "Sign in";
+  }
+});
+
+els.logoutBtn.addEventListener("click", async () => {
+  try { await fetch("api/logout", { method: "POST" }); } catch (e) {}
+  location.reload();
+});
+
+// ════════════════════════════════════════════════════════════
+//  Enter app
+// ════════════════════════════════════════════════════════════
+async function enterApp() {
+  document.body.classList.remove("locked");
+  els.gate.hidden = true;
+  els.app.hidden = false;
+  els.introSub.textContent = REMOTE
+    ? "Live index across every workstation. Sensitive actions (marked) are local-only."
+    : "Live index across every workstation. The buttons run things on your Mac.";
+  await loadProjects();
+  render();
+}
+
 async function loadProjects() {
   try {
     const res = await fetch("projects.json", { cache: "no-store" });
@@ -115,6 +177,11 @@ async function loadProjects() {
     PROJECTS = [];
     els.groups.innerHTML = '<p class="empty">Could not load projects.json.</p>';
   }
+}
+
+async function loadLauncherUrl() {
+  try { const r = await fetch("projects.json", { cache: "no-store" }); const d = await r.json(); return d.launcherUrl || null; }
+  catch (e) { return null; }
 }
 
 // ════════════════════════════════════════════════════════════
@@ -128,15 +195,12 @@ els.filters.addEventListener("click", (e) => {
   FILTER_HQ = btn.dataset.hq;
   render();
 });
-els.search.addEventListener("input", () => {
-  FILTER_Q = els.search.value.trim().toLowerCase();
-  render();
-});
+els.search.addEventListener("input", () => { FILTER_Q = els.search.value.trim().toLowerCase(); render(); });
 
 function matches(p) {
   if (FILTER_HQ !== "all" && p.hq !== FILTER_HQ) return false;
   if (!FILTER_Q) return true;
-  const hay = (p.name + " " + (p.desc || "") + " " + (p.actions || []).map(a => a.label).join(" ")).toLowerCase();
+  const hay = (p.name + " " + (p.desc || "") + " " + (p.actions || []).map((a) => a.label).join(" ")).toLowerCase();
   return hay.includes(FILTER_Q);
 }
 
@@ -151,11 +215,10 @@ function render() {
   const byHq = {};
   for (const p of visible) (byHq[p.hq] ||= []).push(p);
 
-  let cardN = 0;
+  let n = 0;
   for (const hq of HQ_ORDER) {
     const list = byHq[hq];
     if (!list || !list.length) continue;
-
     const group = document.createElement("section");
     group.className = "group";
     group.innerHTML =
@@ -164,21 +227,15 @@ function render() {
         '<span class="group-rule"></span>' +
         '<span class="group-count">' + list.length + (list.length === 1 ? " project" : " projects") + '</span>' +
       '</div>';
-
     const grid = document.createElement("div");
     grid.className = "grid";
-    for (const p of list) {
-      grid.appendChild(card(p, cardN++));
-    }
+    for (const p of list) grid.appendChild(card(p, n++));
     group.appendChild(grid);
     els.groups.appendChild(group);
   }
 
-  const total = PROJECTS.length;
-  const shown = visible.length;
-  els.count.textContent = shown === total
-    ? total + " projects"
-    : shown + " / " + total;
+  const total = PROJECTS.length, shown = visible.length;
+  els.count.textContent = shown === total ? total + " projects" : shown + " / " + total;
 }
 
 function card(p, n) {
@@ -192,9 +249,7 @@ function card(p, n) {
     : "";
 
   el.innerHTML =
-    '<div class="card-top">' +
-      '<h3 class="card-title">' + esc(p.name) + '</h3>' + open +
-    '</div>' +
+    '<div class="card-top"><h3 class="card-title">' + esc(p.name) + '</h3>' + open + '</div>' +
     '<p class="card-desc">' + esc(p.desc || "") + '</p>';
 
   const actions = p.actions || [];
@@ -206,26 +261,26 @@ function card(p, n) {
   } else {
     const wrap = document.createElement("div");
     wrap.className = "actions";
-    for (const a of actions) {
-      wrap.appendChild(a.kind === "launchd" ? jobControl(p, a) : actButton(p, a));
-    }
+    for (const a of actions) wrap.appendChild(a.kind === "launchd" ? jobControl(p, a) : actButton(p, a));
     el.appendChild(wrap);
   }
   return el;
 }
 
+function blockedRemote(a) { return REMOTE && a.sensitive; }
+
 function actButton(p, a) {
   const b = document.createElement("button");
-  b.className = "act" + (a.long ? " long" : "");
+  b.className = "act" + (a.long ? " long" : "") + (a.sensitive ? " sensitive" : "");
   b.dataset.kind = a.kind;
-  b.dataset.project = p.id;
-  b.dataset.action = a.id;
-  b.innerHTML = '<span class="dot"></span><span class="spin"></span><span class="lbl">' + esc(a.label) + '</span>';
-  if (MODE !== "live") {
+  b.innerHTML = '<span class="dot"></span><span class="spin"></span><span class="lbl">' + esc(a.label) + '</span>'
+    + (a.sensitive ? '<span class="lock" aria-hidden="true">·</span>' : '');
+  if (blockedRemote(a)) {
     b.disabled = true;
-    b.title = "Start the local launcher to run this";
+    b.title = "Local-only — run this on the Mac";
+    b.classList.add("locked-action");
   } else {
-    b.title = (a.long ? "Start (long-running): " : "Run: ") + a.label;
+    b.title = (a.long ? "Start (long-running): " : "Run: ") + a.label + (a.sensitive ? "  (sensitive)" : "");
     b.addEventListener("click", () => onRun(p, a, b));
   }
   return b;
@@ -233,21 +288,17 @@ function actButton(p, a) {
 
 function jobControl(p, a) {
   const wrap = document.createElement("div");
-  wrap.className = "job";
+  wrap.className = "job" + (a.sensitive ? " sensitive" : "");
   wrap.title = "launchd · " + (a.service || a.label);
   wrap.innerHTML = '<span class="job-label"><span class="dot"></span>' + esc(a.label) + '</span>';
-  const ops = [
-    ["kickstart", "Run"],
-    ["load", "On"],
-    ["unload", "Off"],
-  ];
+  const ops = [["kickstart", "Run"], ["load", "On"], ["unload", "Off"]];
   for (const [op, lbl] of ops) {
     const btn = document.createElement("button");
     btn.className = "job-op";
     btn.textContent = lbl;
-    if (MODE !== "live") {
+    if (blockedRemote(a)) {
       btn.disabled = true;
-      btn.title = "Start the local launcher";
+      btn.title = "Local-only — run on the Mac";
     } else {
       btn.title = lbl + " · " + (a.service || a.label);
       btn.addEventListener("click", () => onRun(p, a, btn, op));
@@ -261,33 +312,29 @@ function jobControl(p, a) {
 //  Run / stream
 // ════════════════════════════════════════════════════════════
 async function onRun(p, a, btn, op) {
-  // re-focus an already-running long task instead of starting twice
-  if (btn.dataset.runId && RUNS.has(btn.dataset.runId)) {
-    focusRun(btn.dataset.runId);
-    return;
-  }
+  if (btn.dataset.runId && RUNS.has(btn.dataset.runId)) { focusRun(btn.dataset.runId); return; }
   const label = (op ? op + " · " : "") + p.name + " — " + a.label;
   try {
     const res = await fetch("api/run", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: csrfHeaders(),
       body: JSON.stringify({ projectId: p.id, actionId: a.id, op: op || undefined }),
     });
     const j = await res.json();
     if (!res.ok || !j.runId) throw new Error(j.error || "Launch failed");
-
-    const run = {
-      runId: j.runId, label, kind: a.kind, long: !!a.long,
-      btn, buffer: [], state: "running", link: null, es: null,
-    };
+    const run = { runId: j.runId, label, kind: a.kind, long: !!a.long, btn, buffer: [], state: "running", link: null, es: null };
     RUNS.set(j.runId, run);
     btn.dataset.runId = j.runId;
     if (btn.classList.contains("act")) btn.classList.add("running");
     focusRun(j.runId);
     streamRun(run);
-  } catch (e) {
-    toast(e.message || "Launch failed");
-  }
+  } catch (e) { toast(e.message || "Launch failed"); }
+}
+
+function csrfHeaders() {
+  const h = { "Content-Type": "application/json" };
+  if (CSRF) h["X-CSRF"] = CSRF;
+  return h;
 }
 
 function streamRun(run) {
@@ -297,26 +344,16 @@ function streamRun(run) {
   es.addEventListener("out", (ev) => append(run, "", safeData(ev.data)));
   es.addEventListener("err", (ev) => append(run, "err", safeData(ev.data)));
   es.addEventListener("exit", (ev) => {
-    let code = 0;
-    try { code = (JSON.parse(ev.data) || {}).code; } catch (e) {}
-    finishRun(run, code);
-    es.close();
+    let code = 0; try { code = (JSON.parse(ev.data) || {}).code; } catch (e) {}
+    finishRun(run, code); es.close();
   });
-  es.onerror = () => {
-    // stream dropped; if still marked running, treat as ended
-    if (run.state === "running") finishRun(run, null);
-    es.close();
-  };
+  es.onerror = () => { if (run.state === "running") finishRun(run, null); es.close(); };
 }
 
 function finishRun(run, code) {
   run.state = code === 0 ? "ok" : (code === null ? "ok" : "fail");
-  if (run.btn) {
-    run.btn.classList.remove("running");
-    delete run.btn.dataset.runId;
-  }
-  const tag = code === null ? "(ended)" : "(exit " + code + ")";
-  append(run, "meta", "— finished " + tag);
+  if (run.btn) { run.btn.classList.remove("running"); delete run.btn.dataset.runId; }
+  append(run, "meta", "— finished " + (code === null ? "(ended)" : "(exit " + code + ")"));
   if (ACTIVE_RUN === run.runId) paintRunState(run);
 }
 
@@ -325,22 +362,15 @@ function append(run, cls, text) {
   run.buffer.push({ cls, text });
   if (run.buffer.length > 4000) run.buffer.splice(0, run.buffer.length - 4000);
   detectLink(run, text);
-  if (ACTIVE_RUN === run.runId) {
-    appendLine(cls, text);
-    els.drawerOut.scrollTop = els.drawerOut.scrollHeight;
-  }
+  if (ACTIVE_RUN === run.runId) { appendLine(cls, text); els.drawerOut.scrollTop = els.drawerOut.scrollHeight; }
 }
 
 function detectLink(run, text) {
   if (run.link) return;
   const m = String(text).match(/https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?(?:\/[^\s]*)?/);
-  if (m) {
-    run.link = m[0];
-    if (ACTIVE_RUN === run.runId) showLink(run.link);
-  }
+  if (m) { run.link = m[0]; if (ACTIVE_RUN === run.runId) showLink(run.link); }
 }
 
-// ── drawer painting ──
 function focusRun(runId) {
   const run = RUNS.get(runId);
   if (!run) return;
@@ -354,63 +384,26 @@ function focusRun(runId) {
   if (run.link) showLink(run.link); else els.runLink.hidden = true;
 }
 
-function paintRunState(run) {
-  els.runState.className = "run-state " + run.state;
-  els.runStop.hidden = run.state !== "running";
-}
+function paintRunState(run) { els.runState.className = "run-state " + run.state; els.runStop.hidden = run.state !== "running"; }
+function appendLine(cls, text) { const s = document.createElement("span"); if (cls) s.className = cls; s.textContent = text; els.drawerOut.appendChild(s); }
+function showLink(url) { els.runLink.hidden = false; els.runLink.href = url; els.runLink.textContent = "↗ " + url.replace(/^https?:\/\//, ""); }
+function safeData(d) { try { return JSON.parse(d); } catch (e) { return d; } }
 
-function appendLine(cls, text) {
-  const span = document.createElement("span");
-  if (cls) span.className = cls;
-  span.textContent = text;
-  els.drawerOut.appendChild(span);
-}
-
-function showLink(url) {
-  els.runLink.hidden = false;
-  els.runLink.href = url;
-  els.runLink.textContent = "↗ " + url.replace(/^https?:\/\//, "");
-}
-
-function safeData(d) {
-  try { return JSON.parse(d); } catch (e) { return d; }
-}
-
-// ── drawer controls ──
 els.runStop.addEventListener("click", async () => {
   if (!ACTIVE_RUN) return;
-  try {
-    await fetch("api/stop", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ runId: ACTIVE_RUN }),
-    });
-    toast("Stopping…");
-  } catch (e) { toast("Could not stop"); }
+  try { await fetch("api/stop", { method: "POST", headers: csrfHeaders(), body: JSON.stringify({ runId: ACTIVE_RUN }) }); toast("Stopping…"); }
+  catch (e) { toast("Could not stop"); }
 });
-els.runClear.addEventListener("click", () => {
-  const run = RUNS.get(ACTIVE_RUN);
-  if (run) run.buffer = [];
-  els.drawerOut.innerHTML = "";
-});
+els.runClear.addEventListener("click", () => { const r = RUNS.get(ACTIVE_RUN); if (r) r.buffer = []; els.drawerOut.innerHTML = ""; });
 els.drawerClose.addEventListener("click", () => { els.drawer.hidden = true; ACTIVE_RUN = null; });
 
 // ════════════════════════════════════════════════════════════
-//  Toast
+//  Toast + helpers
 // ════════════════════════════════════════════════════════════
 let toastTimer = null;
 function toast(msg) {
-  els.toast.textContent = msg;
-  els.toast.hidden = false;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { els.toast.hidden = true; }, 2600);
+  els.toast.textContent = msg; els.toast.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { els.toast.hidden = true; }, 2600);
 }
-
-// ════════════════════════════════════════════════════════════
-//  Helpers
-// ════════════════════════════════════════════════════════════
-function esc(s) {
-  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 function attr(s) { return esc(s).replace(/'/g, "&#39;"); }

@@ -1,0 +1,6 @@
+.env
+.env.local
+*.bak
+*.bak.*
+node_modules/
+.DS_Store

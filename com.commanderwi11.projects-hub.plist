@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Projects Hub launcher — auto-start LaunchAgent.
+  Install:
+    cp "com.commanderwi11.projects-hub.plist" ~/Library/LaunchAgents/
+    launchctl load -w ~/Library/LaunchAgents/com.commanderwi11.projects-hub.plist
+  Restart after running setup-auth.mjs:
+    launchctl kickstart -k gui/$(id -u)/com.commanderwi11.projects-hub
+  Stop / uninstall:
+    launchctl bootout gui/$(id -u)/com.commanderwi11.projects-hub
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.commanderwi11.projects-hub</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/node</string>
+    <string>/Users/openbob/Library/Mobile Documents/com~apple~CloudDocs/AI Coworking/01_Personal_HQ/Projects/My_Projects_Hub/launcher.mjs</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/openbob/Library/Mobile Documents/com~apple~CloudDocs/AI Coworking/01_Personal_HQ/Projects/My_Projects_Hub</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/openbob/Library/Logs/projects-hub.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/openbob/Library/Logs/projects-hub.log</string>
+</dict>
+</plist>

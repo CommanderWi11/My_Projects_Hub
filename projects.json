@@ -9,10 +9,32 @@
       "desc": "Personal reference wiki for Luis's AI software stack — 16 technology sections, inline GitHub editing, and weekly automated version sync",
       "path": "01_Personal_HQ/Projects/Knowledge_HQ/AI_Supastack",
       "actions": [
-        { "id": "capture", "label": "Capture stack", "kind": "shell", "run": "scripts/capture-stack.sh" },
-        { "id": "sync", "label": "Sync stack", "kind": "node", "run": "scripts/sync-stack.mjs" },
-        { "id": "test-sync", "label": "Test sync", "kind": "node", "run": "scripts/test-sync.mjs" },
-        { "id": "job-capture", "label": "Weekly capture", "kind": "launchd", "run": "scripts/com.commanderwi11.capture-stack.plist", "service": "com.commanderwi11.capture-stack" }
+        {
+          "id": "capture",
+          "label": "Capture stack",
+          "kind": "shell",
+          "run": "scripts/capture-stack.sh"
+        },
+        {
+          "id": "sync",
+          "label": "Sync stack",
+          "kind": "node",
+          "run": "scripts/sync-stack.mjs"
+        },
+        {
+          "id": "test-sync",
+          "label": "Test sync",
+          "kind": "node",
+          "run": "scripts/test-sync.mjs"
+        },
+        {
+          "id": "job-capture",
+          "label": "Weekly capture",
+          "kind": "launchd",
+          "run": "scripts/com.commanderwi11.capture-stack.plist",
+          "service": "com.commanderwi11.capture-stack",
+          "sensitive": true
+        }
       ]
     },
     {
@@ -41,7 +63,12 @@
       "desc": "Weekly family planning ritual — traditions, meals, routines, and shopping list, synced between partners via Supabase",
       "path": "01_Personal_HQ/Projects/Family_HQ/Family_Week",
       "actions": [
-        { "id": "test", "label": "Test", "kind": "npm", "run": "test" }
+        {
+          "id": "test",
+          "label": "Test",
+          "kind": "npm",
+          "run": "test"
+        }
       ]
     },
     {
@@ -52,13 +79,53 @@
       "desc": "Remote control dashboard and CLI for the BYD Seal U DM-i — lock/unlock, charging, climate, locate, horn, and live vehicle status",
       "path": "01_Personal_HQ/Projects/Vehicle_HQ/BYD_Control",
       "actions": [
-        { "id": "dev", "label": "Dev server", "kind": "npm", "run": "dev", "long": true },
-        { "id": "build", "label": "Build", "kind": "npm", "run": "build" },
-        { "id": "build-cli", "label": "Build CLI", "kind": "npm", "run": "build:cli" },
-        { "id": "start", "label": "Start", "kind": "npm", "run": "start", "long": true },
-        { "id": "lint", "label": "Lint", "kind": "npm", "run": "lint" },
-        { "id": "test", "label": "Test", "kind": "npm", "run": "test" },
-        { "id": "test-watch", "label": "Test (watch)", "kind": "npm", "run": "test:watch", "long": true }
+        {
+          "id": "dev",
+          "label": "Dev server",
+          "kind": "npm",
+          "run": "dev",
+          "long": true,
+          "sensitive": true
+        },
+        {
+          "id": "build",
+          "label": "Build",
+          "kind": "npm",
+          "run": "build"
+        },
+        {
+          "id": "build-cli",
+          "label": "Build CLI",
+          "kind": "npm",
+          "run": "build:cli"
+        },
+        {
+          "id": "start",
+          "label": "Start",
+          "kind": "npm",
+          "run": "start",
+          "long": true,
+          "sensitive": true
+        },
+        {
+          "id": "lint",
+          "label": "Lint",
+          "kind": "npm",
+          "run": "lint"
+        },
+        {
+          "id": "test",
+          "label": "Test",
+          "kind": "npm",
+          "run": "test"
+        },
+        {
+          "id": "test-watch",
+          "label": "Test (watch)",
+          "kind": "npm",
+          "run": "test:watch",
+          "long": true
+        }
       ]
     },
     {
@@ -69,7 +136,12 @@
       "desc": "Motorhome listings tracker — scrapes Wallapop, Milanuncios, and Coches.net for quality integral/perfilada campervans in the Canary Islands",
       "path": "01_Personal_HQ/Projects/Assets_HQ/Camper_Lifestyle",
       "actions": [
-        { "id": "search", "label": "Search listings", "kind": "python", "run": "scripts/search.py" }
+        {
+          "id": "search",
+          "label": "Search listings",
+          "kind": "python",
+          "run": "scripts/search.py"
+        }
       ]
     },
     {
@@ -89,10 +161,32 @@
       "desc": "Twice-daily pipeline: fetches WHOOP health data and emails structured metrics to a WhatsApp coaching bot for interpretation",
       "path": "01_Personal_HQ/Projects/Health_HQ/Whoop_WhatsApp",
       "actions": [
-        { "id": "dev", "label": "Dev server", "kind": "npm", "run": "dev", "long": true },
-        { "id": "build", "label": "Build", "kind": "npm", "run": "build" },
-        { "id": "start", "label": "Start", "kind": "npm", "run": "start", "long": true },
-        { "id": "lint", "label": "Lint", "kind": "npm", "run": "lint" }
+        {
+          "id": "dev",
+          "label": "Dev server",
+          "kind": "npm",
+          "run": "dev",
+          "long": true
+        },
+        {
+          "id": "build",
+          "label": "Build",
+          "kind": "npm",
+          "run": "build"
+        },
+        {
+          "id": "start",
+          "label": "Start",
+          "kind": "npm",
+          "run": "start",
+          "long": true
+        },
+        {
+          "id": "lint",
+          "label": "Lint",
+          "kind": "npm",
+          "run": "lint"
+        }
       ]
     },
     {
@@ -103,29 +197,167 @@
       "desc": "Automated Idealista inbox sync, buyer triage, pipeline tracking, and AI-drafted replies for the Gran Canaria apartment sale",
       "path": "01_Personal_HQ/Projects/Assets_HQ/BSA_Options",
       "actions": [
-        { "id": "sync", "label": "Sync portals", "kind": "npm", "run": "sync" },
-        { "id": "venta-sync", "label": "Venta sync", "kind": "npm", "run": "venta:sync" },
-        { "id": "cli", "label": "CLI", "kind": "npm", "run": "cli", "long": true },
-        { "id": "dashboard", "label": "Dashboard", "kind": "npm", "run": "dashboard", "long": true },
-        { "id": "init", "label": "Init DB", "kind": "npm", "run": "init" },
-        { "id": "backup", "label": "Backup DB", "kind": "npm", "run": "backup" },
-        { "id": "login-idealista", "label": "Login Idealista", "kind": "npm", "run": "login:idealista", "long": true },
-        { "id": "login-fotocasa", "label": "Login Fotocasa", "kind": "npm", "run": "login:fotocasa", "long": true },
-        { "id": "create-idealista", "label": "Create Idealista", "kind": "npm", "run": "create:idealista", "long": true },
-        { "id": "create-fotocasa", "label": "Create Fotocasa", "kind": "npm", "run": "create:fotocasa", "long": true },
-        { "id": "migrate-sale-tracker", "label": "Migrate: sale tracker", "kind": "npm", "run": "migrate:sale-tracker" },
-        { "id": "migrate-approve-send", "label": "Migrate: approve/send", "kind": "npm", "run": "migrate:approve-send" },
-        { "id": "test", "label": "Test", "kind": "npm", "run": "test" },
-        { "id": "test-watch", "label": "Test (watch)", "kind": "npm", "run": "test:watch", "long": true },
-        { "id": "larga-build", "label": "Larga: build", "kind": "npm", "run": "larga:build" },
-        { "id": "larga-init", "label": "Larga: init", "kind": "npm", "run": "larga:init" },
-        { "id": "larga-sync", "label": "Larga: sync", "kind": "npm", "run": "larga:sync" },
-        { "id": "larga-triage", "label": "Larga: triage", "kind": "npm", "run": "larga:triage" },
-        { "id": "larga-cli", "label": "Larga: CLI", "kind": "npm", "run": "larga:cli", "long": true },
-        { "id": "larga-dashboard", "label": "Larga: dashboard", "kind": "npm", "run": "larga:dashboard", "long": true },
-        { "id": "larga-login-ha", "label": "Larga: login HousingAnywhere", "kind": "npm", "run": "larga:login:housinganywhere", "long": true },
-        { "id": "larga-create-idealista", "label": "Larga: create Idealista", "kind": "npm", "run": "larga:create:idealista", "long": true },
-        { "id": "larga-create-ha", "label": "Larga: create HousingAnywhere", "kind": "npm", "run": "larga:create:housinganywhere", "long": true }
+        {
+          "id": "sync",
+          "label": "Sync portals",
+          "kind": "npm",
+          "run": "sync",
+          "sensitive": true
+        },
+        {
+          "id": "venta-sync",
+          "label": "Venta sync",
+          "kind": "npm",
+          "run": "venta:sync",
+          "sensitive": true
+        },
+        {
+          "id": "cli",
+          "label": "CLI",
+          "kind": "npm",
+          "run": "cli",
+          "long": true
+        },
+        {
+          "id": "dashboard",
+          "label": "Dashboard",
+          "kind": "npm",
+          "run": "dashboard",
+          "long": true
+        },
+        {
+          "id": "init",
+          "label": "Init DB",
+          "kind": "npm",
+          "run": "init"
+        },
+        {
+          "id": "backup",
+          "label": "Backup DB",
+          "kind": "npm",
+          "run": "backup"
+        },
+        {
+          "id": "login-idealista",
+          "label": "Login Idealista",
+          "kind": "npm",
+          "run": "login:idealista",
+          "long": true,
+          "sensitive": true
+        },
+        {
+          "id": "login-fotocasa",
+          "label": "Login Fotocasa",
+          "kind": "npm",
+          "run": "login:fotocasa",
+          "long": true,
+          "sensitive": true
+        },
+        {
+          "id": "create-idealista",
+          "label": "Create Idealista",
+          "kind": "npm",
+          "run": "create:idealista",
+          "long": true,
+          "sensitive": true
+        },
+        {
+          "id": "create-fotocasa",
+          "label": "Create Fotocasa",
+          "kind": "npm",
+          "run": "create:fotocasa",
+          "long": true,
+          "sensitive": true
+        },
+        {
+          "id": "migrate-sale-tracker",
+          "label": "Migrate: sale tracker",
+          "kind": "npm",
+          "run": "migrate:sale-tracker"
+        },
+        {
+          "id": "migrate-approve-send",
+          "label": "Migrate: approve/send",
+          "kind": "npm",
+          "run": "migrate:approve-send"
+        },
+        {
+          "id": "test",
+          "label": "Test",
+          "kind": "npm",
+          "run": "test"
+        },
+        {
+          "id": "test-watch",
+          "label": "Test (watch)",
+          "kind": "npm",
+          "run": "test:watch",
+          "long": true
+        },
+        {
+          "id": "larga-build",
+          "label": "Larga: build",
+          "kind": "npm",
+          "run": "larga:build"
+        },
+        {
+          "id": "larga-init",
+          "label": "Larga: init",
+          "kind": "npm",
+          "run": "larga:init"
+        },
+        {
+          "id": "larga-sync",
+          "label": "Larga: sync",
+          "kind": "npm",
+          "run": "larga:sync",
+          "sensitive": true
+        },
+        {
+          "id": "larga-triage",
+          "label": "Larga: triage",
+          "kind": "npm",
+          "run": "larga:triage",
+          "sensitive": true
+        },
+        {
+          "id": "larga-cli",
+          "label": "Larga: CLI",
+          "kind": "npm",
+          "run": "larga:cli",
+          "long": true
+        },
+        {
+          "id": "larga-dashboard",
+          "label": "Larga: dashboard",
+          "kind": "npm",
+          "run": "larga:dashboard",
+          "long": true
+        },
+        {
+          "id": "larga-login-ha",
+          "label": "Larga: login HousingAnywhere",
+          "kind": "npm",
+          "run": "larga:login:housinganywhere",
+          "long": true,
+          "sensitive": true
+        },
+        {
+          "id": "larga-create-idealista",
+          "label": "Larga: create Idealista",
+          "kind": "npm",
+          "run": "larga:create:idealista",
+          "long": true,
+          "sensitive": true
+        },
+        {
+          "id": "larga-create-ha",
+          "label": "Larga: create HousingAnywhere",
+          "kind": "npm",
+          "run": "larga:create:housinganywhere",
+          "long": true,
+          "sensitive": true
+        }
       ]
     },
     {
@@ -136,11 +368,39 @@
       "desc": "Flight search portal for Luis's mother — find and request round-trips or one-way flights, with email confirmation via Resend",
       "path": "01_Personal_HQ/Projects/Family_HQ/Flight_Portal",
       "actions": [
-        { "id": "dev", "label": "Dev server", "kind": "npm", "run": "dev", "long": true },
-        { "id": "build", "label": "Build", "kind": "npm", "run": "build" },
-        { "id": "start", "label": "Start", "kind": "npm", "run": "start", "long": true },
-        { "id": "test", "label": "Test", "kind": "npm", "run": "test" },
-        { "id": "test-watch", "label": "Test (watch)", "kind": "npm", "run": "test:watch", "long": true }
+        {
+          "id": "dev",
+          "label": "Dev server",
+          "kind": "npm",
+          "run": "dev",
+          "long": true
+        },
+        {
+          "id": "build",
+          "label": "Build",
+          "kind": "npm",
+          "run": "build"
+        },
+        {
+          "id": "start",
+          "label": "Start",
+          "kind": "npm",
+          "run": "start",
+          "long": true
+        },
+        {
+          "id": "test",
+          "label": "Test",
+          "kind": "npm",
+          "run": "test"
+        },
+        {
+          "id": "test-watch",
+          "label": "Test (watch)",
+          "kind": "npm",
+          "run": "test:watch",
+          "long": true
+        }
       ]
     },
     {
@@ -160,8 +420,20 @@
       "desc": "Automated Monday CEO briefing pipeline — Claude reads all project files + Gmail, generates a reviewed report, and emails CEO Javier Navarro after Luis approves",
       "path": "02_Airnest_HQ/Projects/Weekly_Operations_Briefing",
       "actions": [
-        { "id": "generate", "label": "Generate briefing", "kind": "shell", "run": "scripts/cron1-generate-briefing.sh" },
-        { "id": "monitor", "label": "Monitor reply", "kind": "shell", "run": "scripts/cron2-monitor-reply.sh" }
+        {
+          "id": "generate",
+          "label": "Generate briefing",
+          "kind": "shell",
+          "run": "scripts/cron1-generate-briefing.sh",
+          "sensitive": true
+        },
+        {
+          "id": "monitor",
+          "label": "Monitor reply",
+          "kind": "shell",
+          "run": "scripts/cron2-monitor-reply.sh",
+          "sensitive": true
+        }
       ]
     },
     {
@@ -181,11 +453,42 @@
       "desc": "Active PMS migration for all 8 Airnest properties from Guesty to Mews — API probes, field mapping, reservation imports, and per-property runbooks",
       "path": "02_Airnest_HQ/Projects/Guesty-Mews_Migration",
       "actions": [
-        { "id": "test-connection", "label": "Test connection", "kind": "npm", "run": "test:connection", "cwd": "Mews_Demo_Test" },
-        { "id": "test-resources", "label": "Get resources", "kind": "npm", "run": "test:resources", "cwd": "Mews_Demo_Test" },
-        { "id": "probe", "label": "Probe", "kind": "npm", "run": "probe", "cwd": "Mews_Demo_Test" },
-        { "id": "inspect", "label": "Inspect", "kind": "npm", "run": "inspect", "cwd": "Mews_Demo_Test" },
-        { "id": "test-reservation", "label": "Test reservation", "kind": "npm", "run": "test:reservation", "cwd": "Mews_Demo_Test" }
+        {
+          "id": "test-connection",
+          "label": "Test connection",
+          "kind": "npm",
+          "run": "test:connection",
+          "cwd": "Mews_Demo_Test"
+        },
+        {
+          "id": "test-resources",
+          "label": "Get resources",
+          "kind": "npm",
+          "run": "test:resources",
+          "cwd": "Mews_Demo_Test"
+        },
+        {
+          "id": "probe",
+          "label": "Probe",
+          "kind": "npm",
+          "run": "probe",
+          "cwd": "Mews_Demo_Test"
+        },
+        {
+          "id": "inspect",
+          "label": "Inspect",
+          "kind": "npm",
+          "run": "inspect",
+          "cwd": "Mews_Demo_Test"
+        },
+        {
+          "id": "test-reservation",
+          "label": "Test reservation",
+          "kind": "npm",
+          "run": "test:reservation",
+          "cwd": "Mews_Demo_Test",
+          "sensitive": true
+        }
       ]
     },
     {
@@ -196,7 +499,13 @@
       "desc": "Multi-tenant SaaS auto-filing Spanish SES.Hospedajes guest reports — per-unit owner remapping, XML PV/RH builders, SOAP submission, 59 tests passing",
       "path": "02_Airnest_HQ/Projects/Parte",
       "actions": [
-        { "id": "test", "label": "Run tests", "kind": "python", "run": "-m pytest", "cwd": "engine" }
+        {
+          "id": "test",
+          "label": "Run tests",
+          "kind": "python",
+          "run": "-m pytest",
+          "cwd": "engine"
+        }
       ]
     },
     {
@@ -225,10 +534,33 @@
       "desc": "Automated pre-flight briefing for Binter E195-E2 — headless Playwright PDF scraper, weather and NOTAM extraction, and HTML email timed to STD−90min via launchd",
       "path": "03_Pilot_HQ/Projects/Crew_Briefing_Script",
       "actions": [
-        { "id": "brief", "label": "Crew brief", "kind": "shell", "run": "crewbrief.sh" },
-        { "id": "briefing", "label": "Full briefing", "kind": "shell", "run": "crewbrief_briefing.sh" },
-        { "id": "main", "label": "Run main.py", "kind": "python", "run": "main.py" },
-        { "id": "scheduler", "label": "Scheduler", "kind": "python", "run": "scheduler.py" }
+        {
+          "id": "brief",
+          "label": "Crew brief",
+          "kind": "shell",
+          "run": "crewbrief.sh",
+          "sensitive": true
+        },
+        {
+          "id": "briefing",
+          "label": "Full briefing",
+          "kind": "shell",
+          "run": "crewbrief_briefing.sh",
+          "sensitive": true
+        },
+        {
+          "id": "main",
+          "label": "Run main.py",
+          "kind": "python",
+          "run": "main.py",
+          "sensitive": true
+        },
+        {
+          "id": "scheduler",
+          "label": "Scheduler",
+          "kind": "python",
+          "run": "scheduler.py"
+        }
       ]
     },
     {
@@ -239,15 +571,71 @@
       "desc": "Pilot operations suite — daily Binter Gmail capture and classification, Monday manual mirror with highlight promotion, and dual-mode pre-flight schedule digest",
       "path": "03_Pilot_HQ/Projects/Flight_Bag",
       "actions": [
-        { "id": "digest", "label": "Digest", "kind": "shell", "run": "Herramientas/digest/digest.sh" },
-        { "id": "capture", "label": "Capture inbox", "kind": "shell", "run": "Herramientas/_capture/capture.sh" },
-        { "id": "download", "label": "Binter download", "kind": "shell", "run": "Herramientas/binter_portal/download.sh" },
-        { "id": "promote", "label": "Promote revision", "kind": "shell", "run": "Herramientas/binter_portal/promote_revision.sh" },
-        { "id": "transfer", "label": "Transfer highlights", "kind": "shell", "run": "Herramientas/highlights/transfer.sh" },
-        { "id": "job-digest", "label": "Digest job (PM)", "kind": "launchd", "run": "Herramientas/digest/com.flightbag.digest.plist", "service": "com.flightbag.digest" },
-        { "id": "job-digest-am", "label": "Digest job (AM)", "kind": "launchd", "run": "Herramientas/digest/com.flightbag.digest-am.plist", "service": "com.flightbag.digest-am" },
-        { "id": "job-binter", "label": "Binter portal job", "kind": "launchd", "run": "Herramientas/binter_portal/com.flightbag.binter-portal.plist", "service": "com.flightbag.binter-portal" },
-        { "id": "job-capture", "label": "Capture job", "kind": "launchd", "run": "Herramientas/_capture/com.flightbag.capture.plist", "service": "com.flightbag.capture" }
+        {
+          "id": "digest",
+          "label": "Digest",
+          "kind": "shell",
+          "run": "Herramientas/digest/digest.sh",
+          "sensitive": true
+        },
+        {
+          "id": "capture",
+          "label": "Capture inbox",
+          "kind": "shell",
+          "run": "Herramientas/_capture/capture.sh"
+        },
+        {
+          "id": "download",
+          "label": "Binter download",
+          "kind": "shell",
+          "run": "Herramientas/binter_portal/download.sh",
+          "sensitive": true
+        },
+        {
+          "id": "promote",
+          "label": "Promote revision",
+          "kind": "shell",
+          "run": "Herramientas/binter_portal/promote_revision.sh",
+          "sensitive": true
+        },
+        {
+          "id": "transfer",
+          "label": "Transfer highlights",
+          "kind": "shell",
+          "run": "Herramientas/highlights/transfer.sh"
+        },
+        {
+          "id": "job-digest",
+          "label": "Digest job (PM)",
+          "kind": "launchd",
+          "run": "Herramientas/digest/com.flightbag.digest.plist",
+          "service": "com.flightbag.digest",
+          "sensitive": true
+        },
+        {
+          "id": "job-digest-am",
+          "label": "Digest job (AM)",
+          "kind": "launchd",
+          "run": "Herramientas/digest/com.flightbag.digest-am.plist",
+          "service": "com.flightbag.digest-am",
+          "sensitive": true
+        },
+        {
+          "id": "job-binter",
+          "label": "Binter portal job",
+          "kind": "launchd",
+          "run": "Herramientas/binter_portal/com.flightbag.binter-portal.plist",
+          "service": "com.flightbag.binter-portal",
+          "sensitive": true
+        },
+        {
+          "id": "job-capture",
+          "label": "Capture job",
+          "kind": "launchd",
+          "run": "Herramientas/_capture/com.flightbag.capture.plist",
+          "service": "com.flightbag.capture",
+          "sensitive": true
+        }
       ]
     },
     {
@@ -258,14 +646,61 @@
       "desc": "MCP server for Binter eCrew portal — headless login, monthly roster PDF download, structured parsing of flights and standby duties, and Claude tool exposure",
       "path": "03_Pilot_HQ/Projects/MCP_Projects/eCrew_MCP",
       "actions": [
-        { "id": "roster", "label": "Get roster", "kind": "npm", "run": "roster" },
-        { "id": "dev", "label": "Dev", "kind": "npm", "run": "dev", "long": true },
-        { "id": "start", "label": "Start MCP", "kind": "npm", "run": "start", "long": true },
-        { "id": "build", "label": "Build", "kind": "npm", "run": "build" },
-        { "id": "test", "label": "Test", "kind": "npm", "run": "test" },
-        { "id": "prewarm", "label": "Prewarm", "kind": "shell", "run": "prewarm.sh" },
-        { "id": "mcp-sh", "label": "Start MCP (sh)", "kind": "shell", "run": "ecrew-mcp.sh" },
-        { "id": "job-prewarm", "label": "Prewarm job", "kind": "launchd", "run": "launchd/com.ecrew.prewarm.plist", "service": "com.ecrew.prewarm" }
+        {
+          "id": "roster",
+          "label": "Get roster",
+          "kind": "npm",
+          "run": "roster",
+          "sensitive": true
+        },
+        {
+          "id": "dev",
+          "label": "Dev",
+          "kind": "npm",
+          "run": "dev",
+          "long": true
+        },
+        {
+          "id": "start",
+          "label": "Start MCP",
+          "kind": "npm",
+          "run": "start",
+          "long": true
+        },
+        {
+          "id": "build",
+          "label": "Build",
+          "kind": "npm",
+          "run": "build"
+        },
+        {
+          "id": "test",
+          "label": "Test",
+          "kind": "npm",
+          "run": "test"
+        },
+        {
+          "id": "prewarm",
+          "label": "Prewarm",
+          "kind": "shell",
+          "run": "prewarm.sh",
+          "sensitive": true
+        },
+        {
+          "id": "mcp-sh",
+          "label": "Start MCP (sh)",
+          "kind": "shell",
+          "run": "ecrew-mcp.sh",
+          "sensitive": true
+        },
+        {
+          "id": "job-prewarm",
+          "label": "Prewarm job",
+          "kind": "launchd",
+          "run": "launchd/com.ecrew.prewarm.plist",
+          "service": "com.ecrew.prewarm",
+          "sensitive": true
+        }
       ]
     }
   ]

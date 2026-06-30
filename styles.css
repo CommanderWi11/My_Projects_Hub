@@ -231,12 +231,8 @@ main {
   margin: 0 auto 26px;
   max-width: 360px;
 }
-#gate-form {
-  display: flex;
-  gap: 8px;
-}
-#pw {
-  flex: 1;
+#login-form { display: flex; flex-direction: column; gap: 8px; text-align: left; }
+#login-form input {
   font-family: var(--font-mono);
   font-size: 14px;
   padding: 12px 14px;
@@ -247,11 +243,13 @@ main {
   outline: none;
   transition: border-color .2s, box-shadow .2s;
 }
-#pw:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-weak); }
-#gate-form button {
+#login-form input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-weak); }
+#lg-totp { letter-spacing: .35em; text-align: center; }
+#login-form button {
+  margin-top: 4px;
   font-family: var(--font-mono);
   font-size: 13px;
-  padding: 0 20px;
+  padding: 12px 20px;
   border: 1px solid var(--accent);
   border-radius: var(--r-sm);
   background: var(--accent);
@@ -259,9 +257,23 @@ main {
   cursor: pointer;
   transition: filter .2s, transform .15s var(--ease);
 }
-[data-theme="dark"] #gate-form button { color: #07210f; font-weight: 500; }
-#gate-form button:hover { filter: brightness(1.06); }
-#gate-form button:active { transform: scale(.98); }
+[data-theme="dark"] #login-form button { color: #07210f; font-weight: 500; }
+#login-form button:hover:not(:disabled) { filter: brightness(1.06); }
+#login-form button:active:not(:disabled) { transform: scale(.98); }
+#login-form button:disabled { opacity: .6; cursor: default; }
+.gate-action {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 11px 18px;
+  border: 1px solid var(--accent-line);
+  border-radius: var(--r-sm);
+  color: var(--accent);
+  background: var(--accent-weak);
+  transition: filter .2s;
+}
+.gate-action:hover { filter: brightness(1.05); }
 .gate-error {
   margin-top: 14px;
   color: var(--danger);
@@ -495,6 +507,11 @@ main {
   font-size: 9px;
   color: var(--muted);
 }
+.act.sensitive .lock { color: var(--kind-launchd); font-weight: 700; }
+.act.locked-action { opacity: .5; }
+.act.locked-action .dot { background: var(--kind-launchd); }
+.act.locked-action::after { content: "⤓ local"; font-size: 9px; color: var(--kind-launchd); letter-spacing: .04em; }
+.job.sensitive .job-label .dot { background: var(--kind-launchd); box-shadow: 0 0 0 2px var(--accent-weak); }
 
 /* launchd grouped control */
 .job {

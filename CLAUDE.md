@@ -1,82 +1,85 @@
 # My Projects Hub — Project Instructions
 
-A password-gated webpage that indexes every project across all three HQs **and**
-acts as a one-click launcher for their scripts and automations. Hybrid by design:
+A personal index + **authenticated one-click launcher** for every project across all
+three HQs. Three runtime contexts from the *same* code:
 
-- Opened via the **local launcher** (`node launcher.mjs`, or double-click
-  `Launch Hub.command`) → buttons actually run commands on this Mac.
-- Deployed to **GitHub Pages** → same page, but executable buttons are disabled
-  (with a hint) and only the "Open" links work.
+- **Local** (`http://localhost:4317`, served by the launcher on the Mac) — trusted,
+  no login, every action runs (including sensitive ones).
+- **Remote** (`https://bobmac.tail6dba15.ts.net`, via Tailscale Funnel) — requires
+  login (username + password + TOTP); **sensitive actions are blocked** (local-only).
+- **Public** (`https://commanderwi11.github.io/My_Projects_Hub/`) — minimalist landing
+  only. The manifest and server files are NOT published (see `_config.yml`).
+
+Built personal-only: Tailscale (personal tailnet), GitHub Pages (CommanderWi11), the
+Mac. No Airnest infra.
 
 ## Files
 
 | File | Role |
 |---|---|
-| `index.html` | Markup: topbar, gate, app shell, output drawer. |
-| `styles.css` | Minimalist "console" theme — light + dark via `[data-theme]`, one green accent. |
-| `app.js` | Gate, theme toggle, rendering, hybrid detection, run/stop/launchd, SSE streaming. |
-| `projects.json` | **Source of truth** — every project + its runnable actions. |
-| `launcher.mjs` | Zero-dependency Node server: serves the hub + runs whitelisted actions. |
-| `Launch Hub.command` | Double-click to start the launcher and open the browser. |
+| `index.html` · `styles.css` · `app.js` | UI — minimalist light/dark, login form, cards, output drawer. |
+| `projects.json` | **Source of truth** — projects + runnable actions (+ `sensitive` flags). Not public. |
+| `launcher.mjs` | Zero-dependency Node server: serves the UI + runs whitelisted actions; auth, CSRF, lockout. |
+| `setup-auth.mjs` | One-time: generates password hash + TOTP secret → `~/.config/my-projects-hub/.env`. |
+| `.env.example` | Reference for the secrets file (real secrets live outside the repo). |
+| `com.commanderwi11.projects-hub.plist` | launchd auto-start (keeps the launcher running). |
+| `Launch Hub.command` | Double-click to start the launcher locally. |
+| `_config.yml` | Restricts GitHub Pages to the public landing only. |
 
-## House Style — minimalist console (since 2026-06-30)
+## House style — minimalist console
+Bricolage Grotesque (display) / Hanken Grotesk (body) / IBM Plex Mono (mono),
+single green accent, hairline borders. Light + dark toggle (system default,
+persisted in `localStorage` `mph_theme`).
 
-Replaced the old "Night Ledger" editorial look. Clean, neutral, lots of
-whitespace, hairline borders, a single green accent (run / connected semantics).
-Fonts: **Bricolage Grotesque** (display), **Hanken Grotesk** (body),
-**IBM Plex Mono** (labels, commands, tags). Light + dark with a header toggle;
-defaults to system preference, remembers choice in `localStorage` (`mph_theme`).
-
-## Working Style — adding / changing projects
-
-**Edit `projects.json` only.** No HTML/CSS per project. Schema:
-
+## Manifest schema (`projects.json`)
+Top level: `{ version, projects: [...] }`. Each project:
 ```jsonc
-{
-  "hq": "personal | airnest | pilot",
-  "id": "kebab-slug",            // stable; used by the launcher to whitelist
-  "name": "Display Name",
-  "url": "https://…",           // the "Open" button
-  "desc": "one-line description",
-  "path": "01_Personal_HQ/Projects/.../Dir",   // local path, relative to workspace root
-  "actions": [
-    { "id": "sync", "label": "Sync portals", "kind": "npm",    "run": "sync" },
-    { "id": "x",    "label": "Run x",         "kind": "node",   "run": "scripts/x.mjs" },
-    { "id": "y",    "label": "Run y",         "kind": "python", "run": "main.py", "cwd": "engine" },
-    { "id": "z",    "label": "Do z",          "kind": "shell",  "run": "scripts/z.sh", "long": true },
-    { "id": "job",  "label": "Nightly",       "kind": "launchd","run": "x.plist", "service": "com.foo.x" }
-  ]
-}
+{ "hq":"personal|airnest|pilot", "id":"slug", "name":"…", "url":"https://…",
+  "desc":"…", "path":"01_Personal_HQ/Projects/.../Dir",
+  "actions":[ { "id":"sync","label":"Sync","kind":"npm","run":"sync",
+               "long":false, "cwd":"sub", "service":"com.x.y", "sensitive":false } ] }
 ```
+- `kind`: `npm`(`npm run <run>`) · `node`(`node <run>`) · `python`(venv python if present;
+  `run` may be `-m pytest`) · `shell`(`bash <run>`) · `launchd`(`launchctl load/unload/kickstart`).
+- `cwd` optional subdir; file actions otherwise run from the script's own dir.
+- `long:true` long-running; `sensitive:true` → blocked over the Funnel (local-only).
+- Adding a project/action = edit `projects.json` only. Unknown fields are ignored
+  (forward-compatible).
 
-- `kind`: `npm` (→ `npm run <run>`), `node` (→ `node <run>`), `python`
-  (→ venv python if found, else `python3`; `run` may be `-m pytest`),
-  `shell` (→ `bash <run>`), `launchd` (→ `launchctl load/unload/kickstart`).
-- `cwd` (optional): subdir under `path`. For file actions without `cwd`, the
-  command runs from the script's own directory.
-- `long: true`: long-running (dev servers, dashboards) — button stays active;
-  Stop in the drawer kills the process group. The drawer auto-detects a
-  printed `localhost:PORT` and shows a clickable link.
-- Projects with no local actions just show the "Open" link.
+## Auth model
+- Secrets in `~/.config/my-projects-hub/.env` (outside iCloud): `HUB_USERNAME`,
+  `HUB_PASSWORD_SALT`, `HUB_PASSWORD_HASH` (scrypt), `SESSION_SECRET`, `TOTP_SECRET`.
+- Login = username + password + 6-digit TOTP → HMAC-signed httpOnly `mph_session`
+  cookie (7d) + a CSRF token. Mutating remote calls require the `X-CSRF` header.
+  5 failed logins → 15-min lockout. Mirrors `Flight_Portal` auth, extended with TOTP.
+- Local requests bypass login (anyone reaching localhost is already on the Mac).
+- If auth isn't configured, remote is refused (503); local still works.
 
-## Launcher (`launcher.mjs`)
+## Operating
+- Auto-start: `com.commanderwi11.projects-hub.plist` in `~/Library/LaunchAgents`.
+  After `setup-auth.mjs`: `launchctl kickstart -k gui/$(id -u)/com.commanderwi11.projects-hub`.
+- Funnel: `tailscale funnel --bg 4317` (Funnel must be enabled once in the admin console).
+- Deploy public landing: push to `main` with the **CommanderWi11** credential.
 
-- Resolves the workspace root as three levels up from this folder (override with
-  `WORKSPACE_ROOT`). Default port `4317` (override with `--port` / `PORT`).
-- **Security:** binds to `127.0.0.1` only; executes **only** actions defined in
-  `projects.json` (never arbitrary commands); rejects `/api` requests whose
-  `Origin` isn't the localhost hub.
-- API: `GET /api/health`, `POST /api/run {projectId,actionId,op?}` → `{runId}`,
-  `GET /api/stream?runId=` (SSE), `POST /api/stop {runId}`.
+## API (all under `/api`, same-origin enforced)
+`GET /health` (public) · `POST /login` `{username,password,totp}` → cookie + `{csrf}` ·
+`POST /logout` · `POST /run` `{projectId,actionId,op?}` (auth+CSRF; sensitive blocked remote) →
+`{runId}` · `GET /stream?runId=` (SSE) · `POST /stop` `{runId}`.
 
-## Deploy
-
-- Commit & push to `main`; GitHub Pages redeploys (static index, buttons
-  disabled). The launcher is **local only** — never deployed, never network-exposed.
+## Extending — built for future capabilities
+Keep these extension points clean when adding features:
+- **New action kind** → add a `case` in `buildCommand()` (launcher.mjs) and a dot color
+  in `styles.css` (`--kind-*`). The client renders any kind generically.
+- **New capability/endpoint** → add under `/api/*`; it inherits the auth + CSRF + remote
+  gating already in the request handler. Put the auth check before the logic.
+- **Action parameters / scheduling / run history / status indicators / notifications**
+  are natural next steps — extend the manifest (unknown fields are ignored) and the
+  drawer UI. Prefer manifest-driven config over hardcoding.
+- Anything that can email, post externally, move money, or control the car/home must be
+  flagged `sensitive:true` (and reviewed) before it can run remotely.
 
 ## Rules
-
-- Password gate is client-side only; don't put truly sensitive URLs here.
-- Don't expose tokens, internal endpoints, or PII in `projects.json`.
-- Group/render order: Personal → Airnest → Pilot.
-- Never add an action that points outside the workspace root.
+- Never expose `projects.json` or secrets publicly (the `_config.yml` exclude guards this).
+- Reference secrets via the env file only; never hardcode credentials/tokens.
+- Render order: Personal → Airnest → Pilot.
+- Never add an action that resolves outside the workspace root.

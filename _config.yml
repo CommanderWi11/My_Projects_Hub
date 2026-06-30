@@ -1,0 +1,17 @@
+# GitHub Pages config.
+# Publish ONLY the public landing assets (index.html, styles.css, app.js).
+# Everything that powers the local launcher — the project manifest, the server,
+# setup, docs — is excluded so it is never served on the public github.io URL.
+# (Do NOT add a .nojekyll file; that would disable these excludes.)
+
+exclude:
+  - projects.json
+  - launcher.mjs
+  - setup-auth.mjs
+  - com.commanderwi11.projects-hub.plist
+  - .env.example
+  - .env
+  - CLAUDE.md
+  - MEMORY.md
+  - README.md
+  - Launch Hub.command
