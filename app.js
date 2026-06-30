@@ -282,7 +282,31 @@ function card(p, n) {
   } else {
     const wrap = document.createElement("div");
     wrap.className = "actions";
-    for (const a of actions) wrap.appendChild(a.kind === "launchd" ? jobControl(p, a) : actButton(p, a));
+    const primary = actions.find((a) => a.primary);
+    if (primary) {
+      // One main button; everything else tucked behind a "more" toggle.
+      wrap.appendChild(renderAction(p, primary, true));
+      const others = actions.filter((a) => a !== primary);
+      if (others.length) {
+        const more = document.createElement("div");
+        more.className = "more-actions";
+        more.hidden = true;
+        for (const a of others) more.appendChild(renderAction(p, a, false));
+        const toggle = document.createElement("button");
+        toggle.className = "more-toggle";
+        toggle.type = "button";
+        const label = (n) => "+ " + n + " more step" + (n === 1 ? "" : "s");
+        toggle.textContent = label(others.length);
+        toggle.addEventListener("click", () => {
+          more.hidden = !more.hidden;
+          toggle.textContent = more.hidden ? label(others.length) : "− hide steps";
+        });
+        wrap.appendChild(toggle);
+        wrap.appendChild(more);
+      }
+    } else {
+      for (const a of actions) wrap.appendChild(renderAction(p, a, false));
+    }
     el.appendChild(wrap);
   }
   return el;
@@ -290,11 +314,18 @@ function card(p, n) {
 
 function blockedRemote(a) { return REMOTE && a.sensitive; }
 
-function actButton(p, a) {
+function renderAction(p, a, isPrimary) {
+  return a.kind === "launchd" ? jobControl(p, a) : actButton(p, a, isPrimary);
+}
+
+function actButton(p, a, isPrimary) {
   const b = document.createElement("button");
-  b.className = "act" + (a.long ? " long" : "") + (a.sensitive ? " sensitive" : "");
+  b.className = "act" + (isPrimary ? " act-primary" : "") + (a.long ? " long" : "") + (a.sensitive ? " sensitive" : "");
   b.dataset.kind = a.kind;
-  b.innerHTML = '<span class="dot"></span><span class="spin"></span><span class="lbl">' + esc(a.label) + '</span>'
+  const lead = isPrimary
+    ? '<span class="play" aria-hidden="true">▶</span><span class="spin"></span>'
+    : '<span class="dot"></span><span class="spin"></span>';
+  b.innerHTML = lead + '<span class="lbl">' + esc(a.label) + '</span>'
     + (a.sensitive ? '<span class="lock" aria-hidden="true">·</span>' : '');
   if (blockedRemote(a)) {
     b.disabled = true;

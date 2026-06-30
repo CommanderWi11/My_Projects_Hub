@@ -528,6 +528,42 @@ main {
 .act.locked-action::after { content: "⤓ local"; font-size: 9px; color: var(--kind-launchd); letter-spacing: .04em; }
 .job.sensitive .job-label .dot { background: var(--kind-launchd); box-shadow: 0 0 0 2px var(--accent-weak); }
 
+/* primary "run the whole thing" button + collapsed steps */
+.act-primary {
+  width: 100%;
+  justify-content: center;
+  padding: 11px 14px;
+  font-size: 13px;
+  border-color: var(--accent-line);
+  background: var(--accent-weak);
+  color: var(--accent);
+}
+.act-primary .play { font-size: 8px; line-height: 1; }
+.act-primary:hover:not(:disabled) { background: var(--accent); color: #fff; border-color: var(--accent); }
+[data-theme="dark"] .act-primary:hover:not(:disabled) { color: #07210f; }
+.act-primary.running .play { display: none; }
+.more-toggle {
+  align-self: flex-start;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px;
+  transition: color .2s;
+}
+.more-toggle:hover { color: var(--text); }
+.more-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  width: 100%;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+.more-actions[hidden] { display: none; }
+
 /* launchd grouped control */
 .job {
   display: inline-flex;

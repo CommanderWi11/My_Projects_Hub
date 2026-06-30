@@ -13,7 +13,8 @@
           "id": "capture",
           "label": "Capture stack",
           "kind": "shell",
-          "run": "scripts/capture-stack.sh"
+          "run": "scripts/capture-stack.sh",
+          "primary": true
         },
         {
           "id": "sync",
@@ -425,7 +426,8 @@
           "label": "Generate briefing",
           "kind": "shell",
           "run": "scripts/cron1-generate-briefing.sh",
-          "sensitive": true
+          "sensitive": true,
+          "primary": true
         },
         {
           "id": "monitor",
@@ -539,7 +541,8 @@
           "label": "Crew brief",
           "kind": "shell",
           "run": "crewbrief.sh",
-          "sensitive": true
+          "sensitive": true,
+          "primary": true
         },
         {
           "id": "briefing",
@@ -651,7 +654,8 @@
           "label": "Get roster",
           "kind": "npm",
           "run": "roster",
-          "sensitive": true
+          "sensitive": true,
+          "primary": true
         },
         {
           "id": "dev",
