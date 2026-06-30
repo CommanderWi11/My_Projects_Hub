@@ -56,6 +56,14 @@ Top level: `{ version, projects: [...] }`. Each project:
   5 failed logins → 15-min lockout. Mirrors `Flight_Portal` auth, extended with TOTP.
 - Local requests bypass login (anyone reaching localhost is already on the Mac).
 - If auth isn't configured, remote is refused (503); local still works.
+- **Local vs remote is decided by forwarding headers, NOT the Host header.** A
+  request is "remote" if it carries `X-Forwarded-*` (Tailscale Funnel always adds
+  these) or a non-loopback Host. Never trust `Host` for the local bypass — the
+  funnel forwards a client-spoofable Host (this was a fixed auth-bypass bug).
+- Static serving is an **allow-list** (`PUBLIC_STATIC`): only index.html, styles.css,
+  app.js, set-password.html are ever served; projects.json is auth-gated; everything
+  else (source, docs, setup scripts, plist, .env*) is 404 — so the Funnel can't leak them.
+- Password-reset links are built from `PUBLIC_URL` (trusted), never the request Host.
 
 ## Operating
 - Auto-start: `com.commanderwi11.projects-hub.plist` in `~/Library/LaunchAgents`.

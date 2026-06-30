@@ -47,6 +47,10 @@ const MIME = {
   ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8", ".svg": "image/svg+xml", ".ico": "image/x-icon",
 };
+// Only these files are ever served as static assets. Everything else (source,
+// docs, setup scripts, plist, .env*) is never exposed — even locally — so the
+// public Funnel can't fetch them. projects.json is handled separately (auth-gated).
+const PUBLIC_STATIC = new Set(["/index.html", "/styles.css", "/app.js", "/set-password.html", "/favicon.ico"]);
 
 // ── config / secrets (outside the iCloud repo) ──────────────
 function loadConfig() {
@@ -354,7 +358,12 @@ function makeServer(port) {
   return createServer(async (req, res) => {
     const u = new URL(req.url, `http://127.0.0.1:${port}`);
     const path = u.pathname;
-    const remote = !isLocalHost(hostOf(req));
+    // A request is "remote" if it came through a proxy (Tailscale Funnel always
+    // injects X-Forwarded-* headers) OR its Host isn't loopback. The Host header
+    // alone is NOT trusted — the funnel forwards a client-spoofable Host, so a
+    // genuine local request is one with NO forwarding headers and a loopback Host.
+    const proxied = !!(req.headers["x-forwarded-for"] || req.headers["x-forwarded-proto"] || req.headers["x-forwarded-host"]);
+    const remote = proxied || !isLocalHost(hostOf(req));
     const cookies = parseCookies(req);
     const authed = remote ? (AUTH_ON && verifySession(cookies.mph_session)) : true;
 
@@ -393,8 +402,13 @@ function makeServer(port) {
         const ip = clientIp(req);
         const ra = resetAttempts.get(ip) || { n: 0, until: 0 };
         if (ra.until > Date.now()) return json(res, 429, { error: "too many requests — try again later" });
-        const proto = isHttps(req, remote) ? "https" : "http";
-        const link = proto + "://" + req.headers.host + "/set-password.html?token=" + encodeURIComponent(makeResetToken());
+        // Build the link from a TRUSTED base — never the spoofable Host header,
+        // or an attacker could phish a valid reset token to their own domain.
+        const base = CFG.PUBLIC_URL
+          ? CFG.PUBLIC_URL.replace(/\/+$/, "")
+          : (!proxied && isLocalHost(hostOf(req)) ? "http://" + req.headers.host : null);
+        if (!base) return json(res, 500, { error: "PUBLIC_URL not set — cannot build a safe reset link" });
+        const link = base + "/set-password.html?token=" + encodeURIComponent(makeResetToken());
         try {
           await sendMail({
             subject: "Set your Projects Hub password",
@@ -459,12 +473,17 @@ function makeServer(port) {
       return json(res, 404, { error: "no such endpoint" });
     }
 
-    // ---- static ----
+    // ---- static (allow-list only) ----
     let rel = decodeURIComponent(path === "/" ? "/index.html" : path);
     const filePath = normalize(join(__dirname, rel));
     if (!filePath.startsWith(__dirname)) { res.writeHead(403); return res.end("forbidden"); }
-    // Don't expose the project list to unauthenticated remote visitors.
-    if (remote && !authed && basename(filePath) === "projects.json") { res.writeHead(401); return res.end("login required"); }
+    if (rel === "/projects.json") {
+      // project list: gated for unauthenticated remote visitors
+      if (remote && !authed) { res.writeHead(401); return res.end("login required"); }
+    } else if (!PUBLIC_STATIC.has(rel)) {
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      return res.end("Not found");
+    }
     try {
       const s = await stat(filePath);
       if (s.isDirectory()) throw new Error("dir");

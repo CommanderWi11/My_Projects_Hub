@@ -46,6 +46,17 @@ Index + one-click launcher for every project. Same code, three contexts:
 - 31 actions flagged sensitive (briefings, portal logins/creates, Mews writes,
   BYD car UI dev/start, all launchd toggles). Full list approved by Luis in the plan.
 
+## Security audit 2026-06-30 (fixed)
+- 🔴 Auth bypass: spoofing `Host: localhost` over the Funnel reported remote:false →
+  unauth + sensitive access. FIXED: remote is now decided by X-Forwarded-* presence,
+  not Host. Verified spoofed run → 401.
+- 🟠 File leak: launcher.mjs / MEMORY.md / CLAUDE.md / setup-*.mjs / .plist were
+  served publicly over the Funnel. FIXED: static serving is an allow-list (only
+  index/styles/app/set-password; projects.json auth-gated). Others → 404.
+- 🟠 Reset-link host injection: link used the spoofable Host → token phishing.
+  FIXED: link built from PUBLIC_URL (now in ~/.config/.env).
+- 🟡 Funnel cold-start showed landing instead of login. FIXED: health probe 5s + retry.
+
 ## Open loops
 - Finish the two user actions above to bring remote online.
 - launchd Run/On/Off still not live-fired in test (avoid triggering real automations).

@@ -69,14 +69,20 @@ async function init() {
 }
 
 async function probeLauncher() {
-  try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 1500);
-    const res = await fetch("api/health", { signal: ctrl.signal, cache: "no-store" });
-    clearTimeout(t);
-    const j = await res.json();
-    return res.ok && j && j.ok ? j : null;
-  } catch (e) { return null; }
+  // Try twice with a generous timeout — a cold Tailscale Funnel can be slow on
+  // the first hit, and we must not mistake that for "no launcher" (the landing).
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 5000);
+      const res = await fetch("api/health", { signal: ctrl.signal, cache: "no-store" });
+      clearTimeout(t);
+      const j = await res.json();
+      if (res.ok && j && j.ok) return j;
+      return null; // reachable but not our launcher (e.g. GitHub Pages 404)
+    } catch (e) { /* timeout / network — retry once */ }
+  }
+  return null;
 }
 
 function setStatus(cls, text) {
