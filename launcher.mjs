@@ -388,6 +388,10 @@ function makeServer(port) {
         return json(res, 200, {
           ok: true, version: VERSION, remote, authConfigured: AUTH_ON, authed,
           emailConfigured: EMAIL_ON,
+          // Hand a resumed (cookie-authed) session its CSRF token so mutating
+          // calls work without re-login. Safe: it's derived from the httpOnly
+          // session cookie, and a cross-origin attacker can't read this response.
+          csrf: authed ? csrfFor(cookies.mph_session) : undefined,
           workspaceRoot: remote ? undefined : WORKSPACE_ROOT,
         });
       }

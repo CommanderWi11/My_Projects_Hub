@@ -62,6 +62,9 @@ async function init() {
   if (REMOTE && !health.authConfigured) return showLogin(false);
 
   // local, or remote already authed
+  // Capture the CSRF token for a resumed session (cookie still valid, no fresh
+  // login) — otherwise remote run/stop calls would 403 "bad csrf token".
+  CSRF = health.csrf || null;
   setStatus("live", REMOTE ? "Connected · remote" : "Launcher connected");
   els.footHint.textContent = REMOTE ? "Remote session" : ("Launcher live · " + (health.workspaceRoot || ""));
   els.logoutBtn.hidden = !REMOTE;
