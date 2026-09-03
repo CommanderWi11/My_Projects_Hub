@@ -139,6 +139,10 @@ a { color: inherit; text-decoration: none; }
   transition: background .2s var(--ease);
 }
 .card-open:hover { background: var(--accent-weak); }
+.card-local {
+  font-family: var(--font-mono); font-size: 12px; color: var(--muted);
+  border: 1px dashed var(--border-strong); border-radius: 999px; padding: 2px 10px;
+}
 .card-desc { display: block; margin-top: 5px; color: var(--text-2); font-size: 14px; line-height: 1.5; }
 .card-body { padding: 2px 16px 15px 38px; border-top: 1px dashed var(--border); margin: 0 0 0; }
 .card-body p { margin: 11px 0 0; color: var(--text-2); font-size: 14px; line-height: 1.65; max-width: 72ch; }
@@ -172,18 +176,18 @@ a { color: inherit; text-decoration: none; }
   <section class="intro">
     <h1>Projects</h1>
     <p class="tagline">Everything I'm building: personal apps, Airnest hospitality tech, and pilot tools. Click a project to expand its description.</p>
-    <span class="count">23 projects &middot; updated 2026-09-03</span>
+    <span class="count">26 projects &middot; updated 2026-09-03</span>
   </section>
   <div class="chips">
-        <button class="chip active" type="button" data-filter="all">All <span class="chip-n">23</span></button>
-        <button class="chip" type="button" data-filter="personal">Personal <span class="chip-n">11</span></button>
+        <button class="chip active" type="button" data-filter="all">All <span class="chip-n">26</span></button>
+        <button class="chip" type="button" data-filter="personal">Personal <span class="chip-n">12</span></button>
         <button class="chip" type="button" data-filter="airnest">Airnest <span class="chip-n">9</span></button>
-        <button class="chip" type="button" data-filter="pilot">Pilot <span class="chip-n">3</span></button>
+        <button class="chip" type="button" data-filter="pilot">Pilot <span class="chip-n">5</span></button>
   </div>
     <section class="group" data-group="personal">
       <div class="group-head">
         <h2>Personal</h2>
-        <span class="group-count">11 projects</span>
+        <span class="group-count">12 projects</span>
       </div>
       <div class="cards">
       <details class="card" id="p-ai-supastack">
@@ -307,6 +311,17 @@ a { color: inherit; text-decoration: none; }
         </summary>
         <div class="card-body"><p>A personal finance web app tailored to airline pilots, whose pay varies month to month with flight hours, allowances, and per-diems. It ingests payslips, records and categorises expenses, and renders trends and breakdowns as interactive charts so income variability and spending patterns are visible over time. Built with Next.js on the App Router, Supabase for authentication, Postgres storage and row-level security, Recharts for visualisation, Tailwind CSS for styling, and the Anthropic SDK for assisted document parsing and insights. Active and under ongoing development.</p></div>
       </details>
+      <details class="card" id="p-the-shopper">
+        <summary>
+          <span class="chev" aria-hidden="true"></span>
+          <span class="card-head">
+            <span class="card-name">The Shopper</span>
+            <span class="card-local">local&nbsp;only</span>
+          </span>
+          <span class="card-desc">Autonomous online-buying agent — finds the product, logs in to the merchant, checks out and pays from a hard-capped virtual card, then logs the order</span>
+        </summary>
+        <div class="card-body"><p>An autonomous purchasing agent: given &quot;buy X&quot; it finds the product, applies a written set of buying rules, logs in to the merchant, drives checkout in a real browser and pays with a dedicated virtual card that carries a hard spend cap, then records the order in a running log. The cap is the safety model, enforced by the card issuer rather than the agent&#x27;s judgement, so anything larger stops and asks first; card details live in the operating system keychain and are never printed or read back. Built on browser automation with per-merchant playbooks for the sites used most often, each documenting the checkout quirks that break naive automation. Operational, and deliberately local only: no repository, nothing published.</p></div>
+      </details>
       </div>
     </section>
     <section class="group" data-group="airnest">
@@ -419,7 +434,7 @@ a { color: inherit; text-decoration: none; }
     <section class="group" data-group="pilot">
       <div class="group-head">
         <h2>Pilot</h2>
-        <span class="group-count">3 projects</span>
+        <span class="group-count">5 projects</span>
       </div>
       <div class="cards">
       <details class="card" id="p-crew-briefing">
@@ -454,6 +469,28 @@ a { color: inherit; text-decoration: none; }
           <span class="card-desc">MCP server for Binter eCrew portal — headless login, monthly roster PDF download, structured parsing of flights and standby duties, and Claude tool exposure</span>
         </summary>
         <div class="card-body"><p>A Model Context Protocol server that makes the airline&#x27;s crew portal queryable from Claude. It performs a headless Playwright login, navigates the scheduling module to export the monthly roster PDF, and parses it into structured JSON (flights and legs with times, deadheads, standby and training duties, hotels and monthly statistics), with per-month caching and a scheduled pre-warm so downstream tools can read the data without logging in. Built in Node and TypeScript on the official MCP SDK over stdio, using pdfjs-dist for parsing, with credentials kept outside the repository and an offline test suite run against fixtures. Version 1 is shipped and verified end to end, has survived a portal front-end redesign, and its cached output feeds the other pilot projects.</p></div>
+      </details>
+      <details class="card" id="p-informes-binter">
+        <summary>
+          <span class="chev" aria-hidden="true"></span>
+          <span class="card-head">
+            <span class="card-name">Informes Binter</span>
+            <span class="card-local">local&nbsp;only</span>
+          </span>
+          <span class="card-desc">Drafts and fills the airline&#x27;s operational web reports (delay, captain, safety) from raw event notes — a template per report type, and never submits</span>
+        </summary>
+        <div class="card-body"><p>An assistant for the airline&#x27;s operational reporting forms: delay reports, captain&#x27;s reports and air safety reports. Each report type is taught once and stored as a field map plus a register-and-tone guide, so a later event only needs the raw facts: the assistant drafts the narrative in the expected style, fills the web form through browser automation, and hands it back for a human to check and submit. Aircraft registration and flight numbers are looked up automatically from the archived pre-flight briefing for the date in question, so they never have to be retyped. Spanish-language project; two report types taught and proven on real events, with the rest added as they come up.</p></div>
+      </details>
+      <details class="card" id="p-binter-ops-mcp">
+        <summary>
+          <span class="chev" aria-hidden="true"></span>
+          <span class="card-head">
+            <span class="card-name">Binter Ops MCP</span>
+            <a class="card-open" href="https://github.com/CommanderWi11/MCP_Projects" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
+          </span>
+          <span class="card-desc">MCP server for the airline&#x27;s operations portal — headless login and structured extraction of the day&#x27;s line (forecast, parking, crew, turnaround)</span>
+        </summary>
+        <div class="card-body"><p>A Model Context Protocol server that logs in to a third airline operations portal headlessly and returns the day&#x27;s line as structured data: operational forecast, stand and parking assignment, crew composition and turnaround times. It reuses the crew-portal identity rather than keeping a separate credential, and exposes both MCP tools and a small command-line entry point that the pre-flight briefing pipeline calls directly to fold portal data into the briefing email. Written in TypeScript on the official MCP SDK with Playwright driving the login, and sharing a repository with the crew-roster MCP server. Live and feeding the briefing.</p></div>
       </details>
       </div>
     </section>
@@ -546,6 +583,13 @@ a { color: inherit; text-decoration: none; }
           "url": "https://github.com/CommanderWi11/Pilot_Finance",
           "desc": "Next.js + Supabase web app for tracking pilot personal finances — payslips, expenses, and charts",
           "long": "A personal finance web app tailored to airline pilots, whose pay varies month to month with flight hours, allowances, and per-diems. It ingests payslips, records and categorises expenses, and renders trends and breakdowns as interactive charts so income variability and spending patterns are visible over time. Built with Next.js on the App Router, Supabase for authentication, Postgres storage and row-level security, Recharts for visualisation, Tailwind CSS for styling, and the Anthropic SDK for assisted document parsing and insights. Active and under ongoing development."
+        },
+        {
+          "id": "the-shopper",
+          "name": "The Shopper",
+          "url": "",
+          "desc": "Autonomous online-buying agent — finds the product, logs in to the merchant, checks out and pays from a hard-capped virtual card, then logs the order",
+          "long": "An autonomous purchasing agent: given \"buy X\" it finds the product, applies a written set of buying rules, logs in to the merchant, drives checkout in a real browser and pays with a dedicated virtual card that carries a hard spend cap, then records the order in a running log. The cap is the safety model, enforced by the card issuer rather than the agent's judgement, so anything larger stops and asks first; card details live in the operating system keychain and are never printed or read back. Built on browser automation with per-merchant playbooks for the sites used most often, each documenting the checkout quirks that break naive automation. Operational, and deliberately local only: no repository, nothing published."
         }
       ]
     },
@@ -642,6 +686,20 @@ a { color: inherit; text-decoration: none; }
           "url": "https://github.com/CommanderWi11/MCP_Projects",
           "desc": "MCP server for Binter eCrew portal — headless login, monthly roster PDF download, structured parsing of flights and standby duties, and Claude tool exposure",
           "long": "A Model Context Protocol server that makes the airline's crew portal queryable from Claude. It performs a headless Playwright login, navigates the scheduling module to export the monthly roster PDF, and parses it into structured JSON (flights and legs with times, deadheads, standby and training duties, hotels and monthly statistics), with per-month caching and a scheduled pre-warm so downstream tools can read the data without logging in. Built in Node and TypeScript on the official MCP SDK over stdio, using pdfjs-dist for parsing, with credentials kept outside the repository and an offline test suite run against fixtures. Version 1 is shipped and verified end to end, has survived a portal front-end redesign, and its cached output feeds the other pilot projects."
+        },
+        {
+          "id": "informes-binter",
+          "name": "Informes Binter",
+          "url": "",
+          "desc": "Drafts and fills the airline's operational web reports (delay, captain, safety) from raw event notes — a template per report type, and never submits",
+          "long": "An assistant for the airline's operational reporting forms: delay reports, captain's reports and air safety reports. Each report type is taught once and stored as a field map plus a register-and-tone guide, so a later event only needs the raw facts: the assistant drafts the narrative in the expected style, fills the web form through browser automation, and hands it back for a human to check and submit. Aircraft registration and flight numbers are looked up automatically from the archived pre-flight briefing for the date in question, so they never have to be retyped. Spanish-language project; two report types taught and proven on real events, with the rest added as they come up."
+        },
+        {
+          "id": "binter-ops-mcp",
+          "name": "Binter Ops MCP",
+          "url": "https://github.com/CommanderWi11/MCP_Projects",
+          "desc": "MCP server for the airline's operations portal — headless login and structured extraction of the day's line (forecast, parking, crew, turnaround)",
+          "long": "A Model Context Protocol server that logs in to a third airline operations portal headlessly and returns the day's line as structured data: operational forecast, stand and parking assignment, crew composition and turnaround times. It reuses the crew-portal identity rather than keeping a separate credential, and exposes both MCP tools and a small command-line entry point that the pre-flight briefing pipeline calls directly to fold portal data into the briefing email. Written in TypeScript on the official MCP SDK with Playwright driving the login, and sharing a repository with the crew-roster MCP server. Live and feeding the briefing."
         }
       ]
     }
