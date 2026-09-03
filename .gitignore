@@ -1,0 +1,20 @@
+# Operational files live only on the Mac — never commit them to this public repo.
+launcher.mjs
+setup-*.mjs
+*.plist
+*.command
+projects.json
+lib/
+test/
+docs/
+app.js
+theme.js
+styles.css
+set-password.*
+webauthn-register.*
+MEMORY.md
+CLAUDE.md
+.env*
+.superpowers/
+Resources/
+.DS_Store
