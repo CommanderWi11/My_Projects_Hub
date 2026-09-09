@@ -3,732 +3,387 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Projects Hub &middot; Projects</title>
+<meta name="color-scheme" content="light dark">
+<title>Projects &middot; CommanderWi11</title>
 <meta name="description" content="Everything I'm building: personal apps, Airnest hospitality tech, and pilot tools.">
-<script>
-(function () {
-  var t = null;
-  try { t = localStorage.getItem('mph_theme'); } catch (e) {}
-  if (t !== 'light' && t !== 'dark') {
-    t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-  }
-  document.documentElement.setAttribute('data-theme', t);
-})();
-</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --r-sm: 8px; --r-md: 12px; --r-lg: 16px;
-  --maxw: 880px;
-  --ease: cubic-bezier(.22, .61, .36, 1);
+:root{
+  --font-display:"DM Sans",ui-sans-serif,system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r-sm:10px;--r-md:16px;--r-pill:999px;--maxw:1240px;
+  --ease:cubic-bezier(.22,.61,.36,1);--ease-out:cubic-bezier(.16,1,.3,1);
 }
-[data-theme="light"] {
-  --bg: #f5f5f2;
-  --bg-grad: radial-gradient(1200px 600px at 78% -10%, #eef0ec 0%, transparent 60%);
-  --surface: #ffffff; --surface-2: #fafaf8;
-  --text: #17171a; --text-2: #51515a; --muted: #8b8b93;
-  --border: #e7e7e2; --border-strong: #d8d8d2;
-  --accent: #15803d; --accent-2: #16a34a;
-  --accent-weak: rgba(21, 128, 61, .10); --accent-line: rgba(21, 128, 61, .28);
-  --shadow-card: 0 1px 0 rgba(24, 24, 27, .03);
+[data-theme=light]{
+  --bg:#f3f5f4;--bg-grad:radial-gradient(1200px 640px at 84% -16%,#e8ede9 0%,transparent 64%);
+  --surface:#fff;--surface-2:#f7f9f8;--text:#0b1710;--text-2:#47554d;--muted:#7d8b83;--faint:#adb9b2;
+  --border:#e2e7e4;--border-strong:#cfd7d2;--accent:#17994b;--accent-weak:rgba(23,153,75,.10);
+  --accent-line:rgba(23,153,75,.30);--ink:#0b1710;--ink-text:#f3f5f4;
+  --shadow-card:0 1px 0 rgba(24,24,27,.028);
+  --shadow-lift:0 2px 4px rgba(24,24,27,.05),0 18px 42px -20px rgba(24,24,27,.22);
+  --grain-o:.028;
 }
-[data-theme="dark"] {
-  --bg: #0b0b0c;
-  --bg-grad: radial-gradient(1100px 560px at 80% -12%, #15171a 0%, transparent 62%);
-  --surface: #141416; --surface-2: #1a1a1d;
-  --text: #f3f3f2; --text-2: #b4b4bb; --muted: #76767f;
-  --border: #242427; --border-strong: #323237;
-  --accent: #4ade80; --accent-2: #34d399;
-  --accent-weak: rgba(74, 222, 128, .12); --accent-line: rgba(74, 222, 128, .32);
-  --shadow-card: 0 1px 0 rgba(0, 0, 0, .25);
+[data-theme=dark]{
+  --bg:#080b09;--bg-grad:radial-gradient(1000px 580px at 84% -16%,#101613 0%,transparent 64%);
+  --surface:#10150f;--surface-2:#151b17;--text:#eef2ef;--text-2:#a3b0a8;--muted:#6c7a72;--faint:#46524b;
+  --border:#1e2621;--border-strong:#2e3831;--accent:#3ddc6b;--accent-weak:rgba(61,220,107,.12);
+  --accent-line:rgba(61,220,107,.32);--ink:#eef2ef;--ink-text:#080b09;
+  --shadow-card:0 1px 0 rgba(0,0,0,.22);
+  --shadow-lift:0 2px 6px rgba(0,0,0,.45),0 22px 50px -22px rgba(0,0,0,.9);
+  --grain-o:.04;
 }
-* { box-sizing: border-box; }
-[hidden] { display: none !important; }
-html { scroll-behavior: smooth; }
-body {
-  margin: 0; min-height: 100vh;
-  font-family: var(--font-body);
-  background: var(--bg); background-image: var(--bg-grad); background-attachment: fixed;
-  color: var(--text);
-  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
-  transition: background-color .35s var(--ease), color .35s var(--ease);
-}
-a { color: inherit; text-decoration: none; }
-::selection { background: var(--accent-weak); }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;min-height:100vh;font-family:var(--font-display);background:var(--bg);
+  background-image:var(--bg-grad);background-attachment:fixed;color:var(--text);
+  -webkit-font-smoothing:antialiased;transition:background-color .35s var(--ease),color .35s var(--ease)}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--accent-weak)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:var(--grain-o);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
-.topbar {
-  position: sticky; top: 0; z-index: 40;
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  padding: 14px clamp(18px, 5vw, 44px);
-  background: color-mix(in srgb, var(--bg) 78%, transparent);
-  backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px);
-  border-bottom: 1px solid var(--border);
-}
-.brand { display: flex; align-items: center; gap: 9px; }
-.brand-mark {
-  width: 12px; height: 12px; border-radius: 3px;
-  background: var(--accent); box-shadow: 0 0 0 4px var(--accent-weak);
-}
-.brand-text { font-family: var(--font-display); font-weight: 700; letter-spacing: -.01em; }
-#theme-toggle {
-  appearance: none; border: 1px solid var(--border); background: var(--surface);
-  color: var(--text-2); border-radius: var(--r-sm);
-  width: 34px; height: 30px; font-size: 15px; line-height: 1; cursor: pointer;
-  transition: border-color .2s var(--ease), color .2s var(--ease);
-}
-#theme-toggle:hover { border-color: var(--border-strong); color: var(--text); }
+.topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:14px clamp(18px,5vw,44px);background:color-mix(in srgb,var(--bg) 76%,transparent);
+  backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);
+  border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:baseline;gap:9px}
+.brand-mark{align-self:center;width:11px;height:11px;border-radius:3px;background:var(--accent);
+  box-shadow:0 0 0 4px var(--accent-weak)}
+.brand-text{font-weight:700;font-size:19px;letter-spacing:-.025em}
+.brand-dot{color:var(--accent)}
+.brand-sub{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.icon-btn{display:inline-grid;place-items:center;width:36px;height:36px;border:1px solid var(--border);
+  border-radius:10px;background:var(--surface);color:var(--text-2);cursor:pointer;
+  transition:color .2s,border-color .2s,transform .2s var(--ease)}
+.icon-btn:hover{color:var(--text);border-color:var(--border-strong);transform:translateY(-1px)}
+.i-sun,.i-moon{display:none}
+[data-theme=light] .i-moon{display:block}
+[data-theme=dark] .i-sun{display:block}
 
-.wrap { max-width: var(--maxw); margin: 0 auto; padding: 40px clamp(18px, 5vw, 44px) 24px; }
-.intro h1 {
-  font-family: var(--font-display); font-size: clamp(30px, 5vw, 42px);
-  letter-spacing: -.02em; margin: 0 0 10px;
-}
-.tagline { color: var(--text-2); font-size: 16px; line-height: 1.55; margin: 0 0 6px; max-width: 60ch; }
-.count { color: var(--muted); font-family: var(--font-mono); font-size: 12.5px; }
+main{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;padding:clamp(28px,5vw,60px) clamp(18px,5vw,44px) 90px}
+.intro{margin-bottom:34px;animation:rise .5s var(--ease) both}
+.intro-meta{display:flex;align-items:baseline;gap:14px;margin-bottom:10px}
+.kicker{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--accent)}
+.kicker-dim{color:var(--faint);letter-spacing:.18em}
+.intro-title{font-weight:700;font-size:clamp(52px,16.6vw,238px);letter-spacing:-.055em;
+  text-transform:uppercase;margin:0 0 22px;line-height:.82}
+.intro-sub{color:var(--text-2);font-size:16px;max-width:640px;margin:0;line-height:1.55}
 
-.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 8px; }
-.chip {
-  appearance: none; cursor: pointer;
-  border: 1px solid var(--border); background: var(--surface); color: var(--text-2);
-  border-radius: 999px; padding: 6px 13px; font-size: 13.5px; font-family: var(--font-body);
-  transition: border-color .2s var(--ease), color .2s var(--ease), background .2s var(--ease);
-}
-.chip:hover { border-color: var(--border-strong); color: var(--text); }
-.chip.active { border-color: var(--accent-line); background: var(--accent-weak); color: var(--text); }
-.chip-n { color: var(--muted); font-family: var(--font-mono); font-size: 11px; margin-left: 2px; }
-.chip.active .chip-n { color: var(--accent); }
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding-bottom:20px;margin-bottom:34px;border-bottom:1px solid var(--border);
+  animation:rise .5s .05s var(--ease) both}
+.tabs{position:relative;display:flex;align-items:center;gap:2px;padding:4px;border:1px solid var(--border);
+  border-radius:var(--r-pill);background:var(--surface);box-shadow:var(--shadow-card)}
+.tab-ind{position:absolute;top:4px;bottom:4px;left:0;width:0;border-radius:var(--r-pill);background:var(--ink);
+  transform:translateX(var(--ind-x,0));transition:transform .38s var(--ease-out),width .38s var(--ease-out);pointer-events:none}
+.tabs.no-anim .tab-ind{transition:none}
+.tab{position:relative;z-index:1;font-family:var(--font-mono);font-size:11px;letter-spacing:.11em;
+  text-transform:uppercase;padding:9px 17px;border:0;border-radius:var(--r-pill);background:transparent;
+  color:var(--text-2);cursor:pointer;white-space:nowrap;transition:color .28s var(--ease)}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--ink-text)}
+.tab-sep{width:1px;align-self:stretch;margin:3px 6px;background:var(--border)}
+.toolbar-end{display:flex;align-items:center;gap:14px}
+.search{display:flex;align-items:center;gap:8px;width:190px;padding:8px 13px;border:1px solid var(--border);
+  border-radius:var(--r-pill);background:var(--surface);color:var(--muted);
+  transition:border-color .2s,box-shadow .2s,width .3s var(--ease)}
+.search:focus-within{width:240px;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-weak);color:var(--text-2)}
+.search input{border:0;outline:0;background:transparent;color:var(--text);font-family:var(--font-display);
+  font-size:13.5px;width:100%;min-width:0}
+.search input::-webkit-search-cancel-button{-webkit-appearance:none}
+.count{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
 
-.group { margin-top: 34px; }
-.group-head {
-  display: flex; align-items: baseline; gap: 12px;
-  border-bottom: 1px solid var(--border); padding-bottom: 9px; margin-bottom: 14px;
-}
-.group-head h2 {
-  font-family: var(--font-display); font-size: 19px; letter-spacing: -.01em; margin: 0;
-}
-.group-count { color: var(--muted); font-family: var(--font-mono); font-size: 12px; }
-.cards { display: flex; flex-direction: column; gap: 10px; }
+.groups{display:flex;flex-direction:column;gap:48px}
+.group-head{display:flex;align-items:baseline;gap:14px;margin-bottom:18px}
+.group-name{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase}
+.group-rule{flex:1;height:1px;background:var(--border)}
+.group-count{font-family:var(--font-mono);font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
 
-.card {
-  border: 1px solid var(--border); border-radius: var(--r-md);
-  background: var(--surface); box-shadow: var(--shadow-card);
-  transition: border-color .2s var(--ease);
-}
-.card:hover { border-color: var(--border-strong); }
-.card[open] { border-color: var(--accent-line); }
-.card summary {
-  position: relative; display: block; cursor: pointer;
-  padding: 14px 16px 14px 38px; list-style: none;
-}
-.card summary::-webkit-details-marker { display: none; }
-.card summary:focus-visible { outline: 2px solid var(--accent-line); border-radius: var(--r-md); }
-.chev {
-  position: absolute; left: 15px; top: 19px;
-  width: 7px; height: 7px;
-  border-right: 1.6px solid var(--muted); border-bottom: 1.6px solid var(--muted);
-  transform: rotate(-45deg); transition: transform .22s var(--ease);
-}
-.card[open] .chev { transform: rotate(45deg); border-color: var(--accent); }
-.card-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.card-name { font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: -.01em; }
-.card-open {
-  font-family: var(--font-mono); font-size: 12px; color: var(--accent);
-  border: 1px solid var(--accent-line); border-radius: 999px; padding: 2px 10px;
-  transition: background .2s var(--ease);
-}
-.card-open:hover { background: var(--accent-weak); }
-.card-local {
-  font-family: var(--font-mono); font-size: 12px; color: var(--muted);
-  border: 1px dashed var(--border-strong); border-radius: 999px; padding: 2px 10px;
-}
-.card-desc { display: block; margin-top: 5px; color: var(--text-2); font-size: 14px; line-height: 1.5; }
-.card-body { padding: 2px 16px 15px 38px; border-top: 1px dashed var(--border); margin: 0 0 0; }
-.card-body p { margin: 11px 0 0; color: var(--text-2); font-size: 14px; line-height: 1.65; max-width: 72ch; }
+.card{position:relative;display:flex;flex-direction:column;padding:18px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-card);overflow:hidden;
+  transition:border-color .3s var(--ease),transform .3s var(--ease),box-shadow .3s var(--ease);
+  animation:rise .55s var(--ease-out) both}
+.card::before{content:"";position:absolute;z-index:3;top:0;left:0;right:0;height:2px;background:var(--accent);
+  transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease-out)}
+.card:hover{border-color:var(--border-strong);transform:translateY(-3px);box-shadow:var(--shadow-lift)}
+.card:hover::before{transform:scaleX(1)}
 
-.footer {
-  max-width: var(--maxw); margin: 26px auto 0; padding: 18px clamp(18px, 5vw, 44px) 42px;
-  display: flex; flex-wrap: wrap; gap: 10px 22px; justify-content: space-between;
-  border-top: 1px solid var(--border);
-  color: var(--muted); font-size: 13px;
-}
-.footer a { color: var(--text-2); }
-.footer a:hover { color: var(--accent); }
+.preview{position:relative;margin:-18px -18px 15px;aspect-ratio:16/10;overflow:hidden;
+  background:var(--surface-2);border-bottom:1px solid var(--border);isolation:isolate}
+.preview-frame{position:absolute;top:0;left:0;width:1280px;height:800px;border:0;transform-origin:0 0;
+  transform:scale(var(--pv-scale,.28));pointer-events:none;opacity:0;transition:opacity .6s var(--ease)}
+.preview.ready .preview-frame{opacity:1}
+.preview::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(to bottom,transparent 78%,color-mix(in srgb,var(--surface) 30%,transparent));
+  transition:opacity .35s var(--ease)}
+.card:hover .preview::after{opacity:0}
+.preview-skel{position:absolute;inset:0;z-index:1;
+  background:linear-gradient(100deg,var(--surface-2) 30%,var(--border) 50%,var(--surface-2) 70%);
+  background-size:220% 100%;animation:shimmer 1.6s linear infinite;transition:opacity .4s var(--ease)}
+.preview.ready .preview-skel{opacity:0}
+@keyframes shimmer{from{background-position:130% 0}to{background-position:-130% 0}}
 
-@media (max-width: 560px) {
-  .card summary { padding-left: 32px; }
-  .card-body { padding-left: 32px; }
-  .chev { left: 12px; }
+/* Cards without a preview get a deliberate typographic plate rather than an
+   apologetic error tile — the initials set huge, clipped, in the house style. */
+.plate{position:relative;margin:-18px -18px 15px;aspect-ratio:16/10;overflow:hidden;background:var(--surface-2);
+  border-bottom:1px solid var(--border);display:grid;place-items:center}
+.plate::before{content:"";position:absolute;inset:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:26px 26px;opacity:.5}
+.plate-mark{position:relative;font-weight:700;font-size:88px;letter-spacing:-.06em;line-height:1;
+  color:var(--text);opacity:.10;text-transform:uppercase;transition:opacity .35s var(--ease),color .35s var(--ease)}
+.card:hover .plate-mark{opacity:.2;color:var(--accent)}
+
+.card-meta{display:flex;align-items:center;gap:9px;margin-bottom:12px;font-family:var(--font-mono);
+  font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.card-index{font-variant-numeric:tabular-nums;transition:color .3s var(--ease)}
+.card:hover .card-index{color:var(--accent)}
+.card-meta-rule{flex:1;height:1px;background:var(--border)}
+.card-tag{padding:3px 8px;border:1px solid var(--border);border-radius:var(--r-pill);color:var(--muted);letter-spacing:.08em}
+.card-tag.live{color:var(--accent);border-color:var(--accent-line);background:var(--accent-weak)}
+.card-title{font-weight:700;font-size:21px;letter-spacing:-.035em;margin:0 0 8px;line-height:1.12}
+.card-desc{color:var(--text-2);font-size:13.5px;line-height:1.55;margin:0 0 14px;flex:1;
+  display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-desc.open{display:block;-webkit-line-clamp:none;line-clamp:none}
+.more{align-self:flex-start;margin:-6px 0 14px;padding:0;border:0;background:none;color:var(--muted);
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:color .2s}
+.more:hover{color:var(--accent)}
+.card-long{color:var(--text-2);font-size:13px;line-height:1.6;margin:0 0 14px;white-space:pre-wrap}
+
+.open-bar,.repo-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:var(--r-pill);overflow:hidden}
+.open-bar{padding:14px 20px;background:var(--ink);color:var(--ink-text);
+  transition:background .28s var(--ease),transform .18s var(--ease)}
+.open-bar:hover{background:var(--accent);color:#fff}
+[data-theme=dark] .open-bar:hover{color:#06210f}
+.open-bar:active{transform:scale(.985)}
+.repo-bar{padding:13px 19px;border:1px solid var(--border-strong);color:var(--text-2);
+  transition:border-color .25s var(--ease),background .25s var(--ease),color .25s var(--ease)}
+.repo-bar:hover{border-color:var(--ink);background:var(--ink);color:var(--ink-text)}
+.open-label{display:inline-flex;align-items:center;gap:9px;font-weight:500;white-space:nowrap;flex-shrink:0}
+.open-host{display:inline-flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.04em;
+  text-transform:none;opacity:.6;min-width:0;transition:opacity .28s var(--ease)}
+.open-bar:hover .open-host,.repo-bar:hover .open-host{opacity:.9}
+.open-host-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.open-bar svg,.repo-bar svg{flex-shrink:0;transition:transform .3s var(--ease-out)}
+.open-bar:hover svg,.repo-bar:hover svg{transform:translate(2px,-2px)}
+
+.empty{padding:80px 0;text-align:center;color:var(--muted);font-family:var(--font-mono);font-size:12.5px;line-height:1.65}
+.foot{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;padding:22px clamp(18px,5vw,44px) 40px;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (max-width:860px){
+  .toolbar{flex-direction:column;align-items:stretch;gap:12px}
+  .tabs{max-width:100%;min-width:0;overflow-x:auto;scrollbar-width:none;justify-content:flex-start}
+  .tabs::-webkit-scrollbar{display:none}
+  .toolbar-end{justify-content:space-between;max-width:100%;min-width:0}
+  .search,.search:focus-within{flex:1;width:auto;min-width:0}
 }
-@media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
-  html { scroll-behavior: auto; }
-}
+@media (max-width:560px){.grid{grid-template-columns:1fr}}
 </style>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('mph_theme')}catch(e){}
+if(!t)t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
+document.documentElement.setAttribute('data-theme',t)})();
+</script>
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
+
 <header class="topbar">
-  <div class="brand"><span class="brand-mark"></span><span class="brand-text">My Projects Hub</span></div>
-  <button id="theme-toggle" type="button" aria-label="Toggle light/dark theme" title="Toggle theme">&#9681;</button>
+  <span class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-text">Projects<span class="brand-dot">.</span></span>
+    <span class="brand-sub">CommanderWi11</span>
+  </span>
+  <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle light / dark">
+    <svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"/></svg>
+    <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13.2A8 8 0 1 1 10.8 4a6.4 6.4 0 0 0 9.2 9.2z"/></svg>
+  </button>
 </header>
-<main class="wrap">
-  <section class="intro">
-    <h1>Projects</h1>
-    <p class="tagline">Everything I'm building: personal apps, Airnest hospitality tech, and pilot tools. Click a project to expand its description.</p>
-    <span class="count">26 projects &middot; updated 2026-09-03</span>
-  </section>
-  <div class="chips">
-        <button class="chip active" type="button" data-filter="all">All <span class="chip-n">26</span></button>
-        <button class="chip" type="button" data-filter="personal">Personal <span class="chip-n">12</span></button>
-        <button class="chip" type="button" data-filter="airnest">Airnest <span class="chip-n">9</span></button>
-        <button class="chip" type="button" data-filter="pilot">Pilot <span class="chip-n">5</span></button>
+
+<main>
+  <div class="intro">
+    <div class="intro-meta">
+      <span class="kicker">Index</span>
+      <span class="kicker kicker-dim">10 live &middot; 13 source</span>
+    </div>
+    <h1 class="intro-title">Projects</h1>
+    <p class="intro-sub">Everything I'm building &mdash; personal apps, Airnest hospitality tech, and tools for the cockpit.</p>
   </div>
-    <section class="group" data-group="personal">
-      <div class="group-head">
-        <h2>Personal</h2>
-        <span class="group-count">12 projects</span>
+
+  <div class="toolbar">
+    <div class="tabs" id="tabs" role="tablist" aria-label="Filter projects">
+      <span class="tab-ind" aria-hidden="true"></span>
+      <button class="tab active" data-view="live" data-hq="all" role="tab" aria-selected="true">All</button>
+      <button class="tab" data-view="live" data-hq="personal" role="tab" aria-selected="false">Personal</button>
+      <button class="tab" data-view="live" data-hq="airnest" role="tab" aria-selected="false">Airnest</button>
+      <button class="tab" data-view="live" data-hq="pilot" role="tab" aria-selected="false">Pilot</button>
+      <span class="tab-sep" aria-hidden="true"></span>
+      <button class="tab" data-view="other" data-hq="all" role="tab" aria-selected="false">Other Projects</button>
+    </div>
+    <div class="toolbar-end">
+      <div class="search">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+        <input id="search" type="search" placeholder="Filter&hellip;" aria-label="Filter projects">
       </div>
-      <div class="cards">
-      <details class="card" id="p-ai-supastack">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">AI Supastack</span>
-            <a class="card-open" href="https://commanderwi11.github.io/AI_Supastack/" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Personal reference wiki for my AI software stack — 16 technology sections with install notes, links, and gotchas (read-only)</span>
-        </summary>
-        <div class="card-body"><p>A single-page reference wiki documenting the full AI software stack on my machine: 16 ordered sections covering package management, runtimes, CLI tools, local models, Claude Code plugins, MCP servers, and custom skills, each with links and personal setup notes. Built as one self-contained HTML file on GitHub Pages with no build step. Formerly featured in-page editing and weekly auto-sync; now maintained as a read-only reference.</p></div>
-      </details>
-      <details class="card" id="p-family-plan">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Family Plan</span>
-            <a class="card-open" href="https://family-plan.pages.dev" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Family logistics hub — school calendar, parental leave tracker, baby daily log, routines, health notes, and admin paperwork (Supabase auth)</span>
-        </summary>
-        <div class="card-body"><p>A private family logistics hub that brings the school calendar, parental-leave planning, a baby daily log, household routines, health notes and administrative paperwork tracking into one dashboard. Built as a static progressive web app with vanilla JavaScript and Supabase for authentication and cross-device sync, deployed on Cloudflare Pages. Bilingual by design, with Spanish used wherever content touches school and local admin. Live and actively used.</p></div>
-      </details>
-      <details class="card" id="p-family-trip-japan">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Family Trip Japan</span>
-            <a class="card-open" href="https://commanderwi11.github.io/Family_Trip_Japan/" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Trip planning site for a family journey through Japan — itinerary, destination cards, motorhome planner, and editable research notes</span>
-        </summary>
-        <div class="card-body"><p>A trip-planning site for an extended family journey through Japan, organising the route as day-by-day itinerary stages, destination cards, a campervan leg planner, logistics notes and an editable research and checklist area. Built with plain HTML, CSS and JavaScript as an installable progressive web app, with all notes and checklist state stored locally in the browser and no backend or login. Hosted on GitHub Pages. Live, updated as planning progresses.</p></div>
-      </details>
-      <details class="card" id="p-family-week">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Family Week</span>
-            <a class="card-open" href="https://family-week.pages.dev" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Weekly family planning ritual — traditions, meals, routines, and shopping list, synced between partners via Supabase</span>
-        </summary>
-        <div class="card-body"><p>A weekly family planning app that turns the household&#x27;s Sunday planning ritual into a shared board covering traditions, meals, routines and the shopping list, plus a history view and a printable weekly sheet. Built as a vanilla JavaScript progressive web app with Supabase for auth and real-time data, so both partners see the same plan from their own devices, and deployed on Cloudflare Pages. Live and in weekly use.</p></div>
-      </details>
-      <details class="card" id="p-byd-control">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">BYD Control</span>
-            <a class="card-open" href="https://byd-control.vercel.app" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Remote control dashboard and CLI for the BYD Seal U DM-i — lock/unlock, charging, climate, locate, horn, and live vehicle status</span>
-        </summary>
-        <div class="card-body"><p>A remote control dashboard for a plug-in hybrid vehicle, exposing lock/unlock, charging start/stop, climate and defrost, horn, vehicle locating and live status (range, doors, charge state) through both a web UI and a companion command-line tool. The web app is built with Next.js, React and Tailwind with OAuth-based single-user access control and is deployed on Vercel; the CLI is TypeScript with local keychain-style credential storage, and the vehicle API layer is covered by unit tests. Includes handling for the car&#x27;s telematics sleep state so cached readings are clearly flagged as stale. Live and functional.</p></div>
-      </details>
-      <details class="card" id="p-home-quest-qh">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Home Quest QH</span>
-            <a class="card-open" href="https://commanderwi11.github.io/Home_Quest_QH/" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Daily automated family house search for Gran Canaria — harvests Idealista, has Claude research and rank each candidate against the family brief (budget, bedrooms, garden, office), publishes a Top-5 + Favorites dashboard</span>
-        </summary>
-        <div class="card-body"><p>An automated daily house-hunting pipeline for a family home search on Gran Canaria. Each night it harvests fresh listings from the main Spanish property portal via a browser-driven scraper, then has a headless Claude agent open and deeply research each serious candidate against cross-portal data and a written family rubric, before a validation stage folds the results into a published dashboard of the day&#x27;s Top 5 plus starred favourites and a browsable archive of previous runs. Built in Python with Playwright, a JSON data contract and pytest coverage, running two independent search tracks (a target district and the wider island) and publishing to a static GitHub Pages site. Active, running daily.</p></div>
-      </details>
-      <details class="card" id="p-my-projects-hub">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">My Projects Hub</span>
-            <a class="card-open" href="https://commanderwi11.github.io/My_Projects_Hub/" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Password-gated index and one-click launcher for all projects across Personal, Airnest, and Pilot HQs</span>
-        </summary>
-        <div class="card-body"><p>A private index and one-click launcher for every project across the personal, business and aviation workspaces, rendering a manifest of projects and their runnable actions with live streamed output for each run. Built as a zero-dependency Node server plus a minimalist static console UI, with layered access control: unrestricted on the local machine, password plus TOTP login for remote access over a Tailscale tunnel with an extra step-up check, and sensitive actions blocked entirely outside the local machine. Its public page is this projects list; the launcher, manifest, and server code stay off the public repo. Live and actively extended.</p></div>
-      </details>
-      <details class="card" id="p-whoop-whatsapp">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Whoop WhatsApp</span>
-            <a class="card-open" href="https://whoop-whatsapp.vercel.app" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Twice-daily pipeline: fetches WHOOP health data and emails structured metrics to a WhatsApp coaching bot for interpretation</span>
-        </summary>
-        <div class="card-body"><p>A multi-tenant data pipeline that connects to the WHOOP developer API, pulls each user&#x27;s latest recovery, sleep, and workout metrics twice a day, and emails a structured JSON payload to a downstream WhatsApp coaching bot that turns it into a readable briefing. Deliberately scoped as a reliable data pipe with no interpretation logic of its own, it handles OAuth token storage, per-user timezone scheduling, and strict tenant isolation. Built with Next.js and React on Vercel, with Supabase for the database, row-level security, and scheduled edge functions, plus Resend for transactional email. Active and running on schedule.</p></div>
-      </details>
-      <details class="card" id="p-bsa-options">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">BSA Options</span>
-            <a class="card-open" href="https://bsa-options.pages.dev" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Automated Idealista inbox sync, buyer triage, pipeline tracking, and AI-drafted replies for the Gran Canaria apartment sale</span>
-        </summary>
-        <div class="card-body"><p>An automation toolkit for marketing and selling a residential property through Spanish real-estate portals. It logs into the listing portal with a persistent browser session, syncs the message inbox, classifies incoming enquiries to separate genuine buyers from agency solicitations, tracks each conversation through a staged pipeline, and generates reply drafts that a human reviews and approves before anything is sent. Written in Node.js and TypeScript with Playwright for portal automation, SQLite for local storage, the Anthropic SDK for triage and drafting, and Vitest for tests; a local review dashboard plus an access-gated static snapshot published to Cloudflare Pages provide the front end. Active, running on a daily automated cycle with human approval in the loop.</p></div>
-      </details>
-      <details class="card" id="p-flight-portal">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Flight Portal (Angelita)</span>
-            <a class="card-open" href="https://angelita-vuelos.vercel.app" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Flight search portal for my mother — find and request round-trips or one-way flights, with email confirmation via Resend</span>
-        </summary>
-        <div class="card-body"><p>A small Spanish-language flight search portal designed for a non-technical relative, letting them look up round-trip or one-way itineraries, pick outbound and return legs from time-sorted results, and submit a request that is emailed onward for booking. The interface is intentionally simple, with trip-type toggles, full airline names alongside flight numbers, and a plain-language confirmation screen. Built on Next.js and React with Tailwind CSS, a third-party flight data API for schedules, and Resend for email notifications, deployed on Vercel with a test suite covering the search and request flows. Live and in use, with an updated visual design ready to ship.</p></div>
-      </details>
-      <details class="card" id="p-pilot-finance">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Pilot Finance</span>
-            <a class="card-open" href="https://github.com/CommanderWi11/Pilot_Finance" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Next.js + Supabase web app for tracking pilot personal finances — payslips, expenses, and charts</span>
-        </summary>
-        <div class="card-body"><p>A personal finance web app tailored to airline pilots, whose pay varies month to month with flight hours, allowances, and per-diems. It ingests payslips, records and categorises expenses, and renders trends and breakdowns as interactive charts so income variability and spending patterns are visible over time. Built with Next.js on the App Router, Supabase for authentication, Postgres storage and row-level security, Recharts for visualisation, Tailwind CSS for styling, and the Anthropic SDK for assisted document parsing and insights. Active and under ongoing development.</p></div>
-      </details>
-      <details class="card" id="p-the-shopper">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">The Shopper</span>
-            <span class="card-local">local&nbsp;only</span>
-          </span>
-          <span class="card-desc">Autonomous online-buying agent — finds the product, logs in to the merchant, checks out and pays from a hard-capped virtual card, then logs the order</span>
-        </summary>
-        <div class="card-body"><p>An autonomous purchasing agent: given &quot;buy X&quot; it finds the product, applies a written set of buying rules, logs in to the merchant, drives checkout in a real browser and pays with a dedicated virtual card that carries a hard spend cap, then records the order in a running log. The cap is the safety model, enforced by the card issuer rather than the agent&#x27;s judgement, so anything larger stops and asks first; card details live in the operating system keychain and are never printed or read back. Built on browser automation with per-merchant playbooks for the sites used most often, each documenting the checkout quirks that break naive automation. Operational, and deliberately local only: no repository, nothing published.</p></div>
-      </details>
-      </div>
-    </section>
-    <section class="group" data-group="airnest">
-      <div class="group-head">
-        <h2>Airnest</h2>
-        <span class="group-count">9 projects</span>
-      </div>
-      <div class="cards">
-      <details class="card" id="p-airnest-shared">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Airnest Shared</span>
-            <span class="card-local">local&nbsp;only</span>
-          </span>
-          <span class="card-desc">Local archive and authoring workspace for Airnest&#x27;s internal documents (CEO briefings, integration reports, meeting briefs); the public portal it used to publish to was retired in 2026</span>
-        </summary>
-        <div class="card-body"><p>The document workspace behind Airnest&#x27;s internal reporting: CEO briefings, integration status reports, meeting briefs and operational snapshots, each authored as a self-contained HTML artifact against a shared house style, alongside the reusable document and email templates everything is built from. It used to publish those artifacts to a public static site sitting behind a passcode screen. That portal was retired in September 2026, once it was clear the gate was client-side only and every document could be fetched directly regardless. Documents are sent by email now, and this remains a local archive and authoring space.</p></div>
-      </details>
-      <details class="card" id="p-weekly-ops-briefing">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Weekly Ops Briefing</span>
-            <a class="card-open" href="https://github.com/Airnest-Homes-SL" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Automated Monday CEO briefing pipeline — Claude reads all project files + Gmail, generates a reviewed report, and emails the CEO after my approval</span>
-        </summary>
-        <div class="card-body"><p>An automated weekly briefing pipeline that produces a short, bottom-line-first operations report for the CEO. A scheduled job runs Claude Code headlessly to read every project&#x27;s working files plus the prior week&#x27;s company email, drafts the briefing in markdown and light HTML, emails it for review, and then sends the approved version on, applying any inline corrections the reviewer replies with. Built from shell scripts, a macOS scheduler, and a Gmail integration; it has been running weekly since May 2026, with message threading so each edition chains into a single ongoing conversation.</p></div>
-      </details>
-      <details class="card" id="p-mews-api-connector">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Mews API Connector</span>
-            <a class="card-open" href="https://github.com/Airnest-Homes-SL/mews-api-connector" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Certified Mews integration client — stdlib-only Python wrappers for reservations, bills, and customers across all 8 properties</span>
-        </summary>
-        <div class="card-body"><p>A certified private-integration client for the Mews hospitality PMS, covering the certification process and the reusable code that came out of it. The client is dependency-free Python (3.10+, standard library only) with modules for reservations, bills, customers, and property configuration, per-property and portfolio access tokens supplied via environment variables, plus a recipe book and read/write test suites. Certification is complete and production credentials are in place across all eight properties; the client is in active use and packaged to be portable enough for the CEO to run his own instance.</p></div>
-      </details>
-      <details class="card" id="p-guesty-mews-migration">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Guesty–Mews Migration</span>
-            <a class="card-open" href="https://github.com/Airnest-Homes-SL" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Active PMS migration for all 8 Airnest properties from Guesty to Mews — API probes, field mapping, reservation imports, and per-property runbooks</span>
-        </summary>
-        <div class="card-body"><p>The working project for moving all eight Airnest properties off Guesty and onto Mews. It covers API probing on both platforms, an entity-by-entity map of what can be migrated programmatically versus rebuilt by hand, reservation and guest import file builders, per-property configuration runbooks, and user and role setup, using Python for extraction and transformation, spreadsheet import templates for the Mews side, and browser automation for interfaces with no API. Active and running property by property on a staged go-live schedule, with several hotels already fully migrated.</p></div>
-      </details>
-      <details class="card" id="p-gestor-hospedajes">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Gestor Hospedajes</span>
-            <a class="card-open" href="https://github.com/Airnest-Homes-SL/Gestor_Hospedajes" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Multi-tenant SaaS auto-filing Spanish SES.Hospedajes guest reports — per-unit owner remapping, XML PV/RH builders, SOAP submission</span>
-        </summary>
-        <div class="card-body"><p>A multi-tenant service that automates Spanish SES.Hospedajes guest reporting (RD 933/2021) for lodging operators, with per-unit remapping of owner registration numbers: the case native PMS integrations do not handle. The Python engine models reservations, validates and quarantines incomplete records rather than filing them, builds the PV and RH XML documents, and submits them over SOAP (ZIP plus Base64 payloads) or emits bulk-upload files; a Next.js dashboard and Postgres/Supabase job queue are designed but intentionally dormant. Built to EU data-residency and GDPR constraints, including a strict field allowlist and no storage of identity-document images. The engine core is complete and covered by tests, with the single-tenant filing mode shipping first.</p></div>
-      </details>
-      <details class="card" id="p-airnest-ops-brain">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Airnest Ops Brain</span>
-            <a class="card-open" href="https://github.com/Airnest-Homes-SL" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Architecture for Airnest&#x27;s internal intelligence layer — FastMCP + SQLite data lake connecting 9 tools; Mews webhook receiver live on a cloud VPS</span>
-        </summary>
-        <div class="card-body"><p>The architecture and phased plan for Airnest&#x27;s internal intelligence layer: a FastMCP server backed by a local SQLite data lake that consolidates the PMS, housekeeping, revenue management, accounting, banking, guest communications, HR, and energy-consumption systems into one queryable source, refreshed by a nightly sync plus real-time PMS webhooks. A first component is already deployed: a Mews webhook receiver running as a FastAPI service behind Nginx with TLS on a small cloud VPS. The wider build is deliberately on hold behind the PMS migration and the guest-communications rollout, with the full schema, tool inventory, and phase gates documented in the meantime.</p></div>
-      </details>
-      <details class="card" id="p-conduit-onboarding">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Conduit Onboarding</span>
-            <a class="card-open" href="https://github.com/Airnest-Homes-SL" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Procurement tracker for Conduit.ai as Airnest&#x27;s AI front-desk — WhatsApp, OTA inbox, email, voice AI, and Mews integration</span>
-        </summary>
-        <div class="card-body"><p>A procurement and onboarding workspace for adopting Conduit as Airnest&#x27;s AI front desk, covering guest messaging across WhatsApp, OTA inboxes, email, and voice, connected to the PMS. It tracks commercial negotiation, listing and property configuration, staff workflows, and an ongoing defect log, and includes a scheduled automation that reads the mailbox, reconciles a Notion bug tracker, and emails a weekly change report. The platform is live in production with high automation coverage; commercial terms and the open defect backlog remain under active review, alongside a documented plan to reassess once the PMS ships native guest messaging.</p></div>
-      </details>
-      <details class="card" id="p-infrastructure-setup">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Infrastructure Setup</span>
-            <a class="card-open" href="https://github.com/Airnest-Homes-SL/infrastructure-setup" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Living inventory and change log for all Airnest HQ infrastructure — where every repo, service, secret, and shared doc lives</span>
-        </summary>
-        <div class="card-body"><p>A living inventory and change log for Airnest&#x27;s technical setup, a reference project rather than a codebase. It records where every repository, hosted service, domain, certificate, scheduled job, and shared document lives, plus pointers to where each secret is stored (never the values themselves), and requires a dated entry for any infrastructure change. The initial consolidation into a company-owned GitHub organisation is complete, and the inventory is maintained as the source of truth for &#x27;where does this live?&#x27; questions.</p></div>
-      </details>
-      <details class="card" id="p-siteminder-workshop">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">SiteMinder Workshop</span>
-            <a class="card-open" href="https://github.com/Airnest-Homes-SL" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Sets up SiteMinder as Airnest&#x27;s channel manager between Mews and the OTAs (Booking.com, Airbnb, Expedia) — account/property config, activation, go-live tracking</span>
-        </summary>
-        <div class="card-body"><p>Sets up SiteMinder as the channel manager sitting between Mews and the OTAs, so availability and rates push outward and bookings flow back in. Scope covers account and property configuration, room-type and rate-plan mapping between the two systems, scraping and normalising property and room descriptions so listings launch complete, and OTA channel mapping with go-live checks. Research recorded here established that SiteMinder exposes no configuration write API to hotelier customers, so setup is done through the web UI with browser automation for repetitive edits. The first property&#x27;s room types are configured and verified and the Mews link has passed testing, with activation and a possible PMS-native channel-manager alternative still being evaluated.</p></div>
-      </details>
-      </div>
-    </section>
-    <section class="group" data-group="pilot">
-      <div class="group-head">
-        <h2>Pilot</h2>
-        <span class="group-count">5 projects</span>
-      </div>
-      <div class="cards">
-      <details class="card" id="p-crew-briefing">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Crew Briefing</span>
-            <a class="card-open" href="https://github.com/CommanderWi11/Crew-Briefing" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Automated pre-flight briefing for Binter E195-E2 — headless Playwright PDF scraper, weather and NOTAM extraction, and HTML email timed to STD−90min via launchd</span>
-        </summary>
-        <div class="card-body"><p>A Python pipeline that assembles a complete pre-flight briefing for E195-E2 operations without manual work: it logs into the airline&#x27;s flight-planning and operations portals headlessly with Playwright, downloads the operational flight plan and related PDFs, and extracts weather, NOTAMs, route data and open deferred-maintenance (MEL/CDL) items into a single structured brief. Output is a styled HTML email with generated PDF attachments (flight-level and wind tables, and an indexed MEL extract), delivered on a schedule keyed to scheduled departure time. It also includes a fuel-first cruise advisor that interpolates published aircraft performance tables to suggest optimum level and Mach, and refuses to extrapolate outside the published data. Built with Python, Playwright and PDF parsing libraries; actively used on the line and backed by roughly 250 automated tests.</p></div>
-      </details>
-      <details class="card" id="p-flight-bag">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Flight Bag</span>
-            <a class="card-open" href="https://github.com/CommanderWi11/Flight_Bag" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">Pilot operations suite — daily Binter Gmail capture and classification, Monday manual mirror with highlight promotion, and dual-mode pre-flight schedule digest</span>
-        </summary>
-        <div class="card-body"><p>A pilot operations suite that keeps day-to-day airline paperwork current and pushes only what matters into the inbox. It performs a daily read-only capture of company email and schedule data, classifies communications by type, mirrors the document manager on a weekly schedule to pull down new manual revisions, and automatically carries a pilot&#x27;s PDF highlights across from the superseded revision to the new one. A dual-mode digest email covers either the working day or the eve of a duty block, listing new communications, attaching the relevant PDFs and flagging special activities such as line checks read from the parsed roster. Written in Python with the Gmail API, headless browser automation and PDF tooling; in production, having been narrowed in 2026 from a broader study hub into a focused operations data pipeline.</p></div>
-      </details>
-      <details class="card" id="p-ecrew-mcp">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">eCrew MCP</span>
-            <a class="card-open" href="https://github.com/CommanderWi11/MCP_Projects" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">MCP server for Binter eCrew portal — headless login, monthly roster PDF download, structured parsing of flights and standby duties, and Claude tool exposure</span>
-        </summary>
-        <div class="card-body"><p>A Model Context Protocol server that makes the airline&#x27;s crew portal queryable from Claude. It performs a headless Playwright login, navigates the scheduling module to export the monthly roster PDF, and parses it into structured JSON (flights and legs with times, deadheads, standby and training duties, hotels and monthly statistics), with per-month caching and a scheduled pre-warm so downstream tools can read the data without logging in. Built in Node and TypeScript on the official MCP SDK over stdio, using pdfjs-dist for parsing, with credentials kept outside the repository and an offline test suite run against fixtures. Version 1 is shipped and verified end to end, has survived a portal front-end redesign, and its cached output feeds the other pilot projects.</p></div>
-      </details>
-      <details class="card" id="p-informes-binter">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Informes Binter</span>
-            <span class="card-local">local&nbsp;only</span>
-          </span>
-          <span class="card-desc">Drafts and fills the airline&#x27;s operational web reports (delay, captain, safety) from raw event notes — a template per report type, and never submits</span>
-        </summary>
-        <div class="card-body"><p>An assistant for the airline&#x27;s operational reporting forms: delay reports, captain&#x27;s reports and air safety reports. Each report type is taught once and stored as a field map plus a register-and-tone guide, so a later event only needs the raw facts: the assistant drafts the narrative in the expected style, fills the web form through browser automation, and hands it back for a human to check and submit. Aircraft registration and flight numbers are looked up automatically from the archived pre-flight briefing for the date in question, so they never have to be retyped. Spanish-language project; two report types taught and proven on real events, with the rest added as they come up.</p></div>
-      </details>
-      <details class="card" id="p-binter-ops-mcp">
-        <summary>
-          <span class="chev" aria-hidden="true"></span>
-          <span class="card-head">
-            <span class="card-name">Binter Ops MCP</span>
-            <a class="card-open" href="https://github.com/CommanderWi11/MCP_Projects" target="_blank" rel="noopener">Open&nbsp;&#8599;</a>
-          </span>
-          <span class="card-desc">MCP server for the airline&#x27;s operations portal — headless login and structured extraction of the day&#x27;s line (forecast, parking, crew, turnaround)</span>
-        </summary>
-        <div class="card-body"><p>A Model Context Protocol server that logs in to a third airline operations portal headlessly and returns the day&#x27;s line as structured data: operational forecast, stand and parking assignment, crew composition and turnaround times. It reuses the crew-portal identity rather than keeping a separate credential, and exposes both MCP tools and a small command-line entry point that the pre-flight briefing pipeline calls directly to fold portal data into the briefing email. Written in TypeScript on the official MCP SDK with Playwright driving the login, and sharing a repository with the crew-roster MCP server. Live and feeding the briefing.</p></div>
-      </details>
-      </div>
-    </section>
+      <span class="count" id="count">&mdash;</span>
+    </div>
+  </div>
+
+  <div id="groups" class="groups"></div>
+  <p id="empty" class="empty" hidden>Nothing here.</p>
 </main>
-<footer class="footer">
-  <span>My Projects Hub</span>
-  <span><a href="https://github.com/CommanderWi11/My_Projects_Hub" target="_blank" rel="noopener">View on GitHub</a></span>
+
+<footer class="foot">
+  <span>CommanderWi11 &middot; Personal Index</span>
+  <span>Built and maintained by hand</span>
 </footer>
-<script type="application/json" id="projects-data">
-{
-  "updated": "2026-09-03",
-  "groups": [
-    {
-      "id": "personal",
-      "label": "Personal",
-      "projects": [
-        {
-          "id": "ai-supastack",
-          "name": "AI Supastack",
-          "url": "https://commanderwi11.github.io/AI_Supastack/",
-          "desc": "Personal reference wiki for my AI software stack — 16 technology sections with install notes, links, and gotchas (read-only)",
-          "long": "A single-page reference wiki documenting the full AI software stack on my machine: 16 ordered sections covering package management, runtimes, CLI tools, local models, Claude Code plugins, MCP servers, and custom skills, each with links and personal setup notes. Built as one self-contained HTML file on GitHub Pages with no build step. Formerly featured in-page editing and weekly auto-sync; now maintained as a read-only reference."
-        },
-        {
-          "id": "family-plan",
-          "name": "Family Plan",
-          "url": "https://family-plan.pages.dev",
-          "desc": "Family logistics hub — school calendar, parental leave tracker, baby daily log, routines, health notes, and admin paperwork (Supabase auth)",
-          "long": "A private family logistics hub that brings the school calendar, parental-leave planning, a baby daily log, household routines, health notes and administrative paperwork tracking into one dashboard. Built as a static progressive web app with vanilla JavaScript and Supabase for authentication and cross-device sync, deployed on Cloudflare Pages. Bilingual by design, with Spanish used wherever content touches school and local admin. Live and actively used."
-        },
-        {
-          "id": "family-trip-japan",
-          "name": "Family Trip Japan",
-          "url": "https://commanderwi11.github.io/Family_Trip_Japan/",
-          "desc": "Trip planning site for a family journey through Japan — itinerary, destination cards, motorhome planner, and editable research notes",
-          "long": "A trip-planning site for an extended family journey through Japan, organising the route as day-by-day itinerary stages, destination cards, a campervan leg planner, logistics notes and an editable research and checklist area. Built with plain HTML, CSS and JavaScript as an installable progressive web app, with all notes and checklist state stored locally in the browser and no backend or login. Hosted on GitHub Pages. Live, updated as planning progresses."
-        },
-        {
-          "id": "family-week",
-          "name": "Family Week",
-          "url": "https://family-week.pages.dev",
-          "desc": "Weekly family planning ritual — traditions, meals, routines, and shopping list, synced between partners via Supabase",
-          "long": "A weekly family planning app that turns the household's Sunday planning ritual into a shared board covering traditions, meals, routines and the shopping list, plus a history view and a printable weekly sheet. Built as a vanilla JavaScript progressive web app with Supabase for auth and real-time data, so both partners see the same plan from their own devices, and deployed on Cloudflare Pages. Live and in weekly use."
-        },
-        {
-          "id": "byd-control",
-          "name": "BYD Control",
-          "url": "https://byd-control.vercel.app",
-          "desc": "Remote control dashboard and CLI for the BYD Seal U DM-i — lock/unlock, charging, climate, locate, horn, and live vehicle status",
-          "long": "A remote control dashboard for a plug-in hybrid vehicle, exposing lock/unlock, charging start/stop, climate and defrost, horn, vehicle locating and live status (range, doors, charge state) through both a web UI and a companion command-line tool. The web app is built with Next.js, React and Tailwind with OAuth-based single-user access control and is deployed on Vercel; the CLI is TypeScript with local keychain-style credential storage, and the vehicle API layer is covered by unit tests. Includes handling for the car's telematics sleep state so cached readings are clearly flagged as stale. Live and functional."
-        },
-        {
-          "id": "home-quest-qh",
-          "name": "Home Quest QH",
-          "url": "https://commanderwi11.github.io/Home_Quest_QH/",
-          "desc": "Daily automated family house search for Gran Canaria — harvests Idealista, has Claude research and rank each candidate against the family brief (budget, bedrooms, garden, office), publishes a Top-5 + Favorites dashboard",
-          "long": "An automated daily house-hunting pipeline for a family home search on Gran Canaria. Each night it harvests fresh listings from the main Spanish property portal via a browser-driven scraper, then has a headless Claude agent open and deeply research each serious candidate against cross-portal data and a written family rubric, before a validation stage folds the results into a published dashboard of the day's Top 5 plus starred favourites and a browsable archive of previous runs. Built in Python with Playwright, a JSON data contract and pytest coverage, running two independent search tracks (a target district and the wider island) and publishing to a static GitHub Pages site. Active, running daily."
-        },
-        {
-          "id": "my-projects-hub",
-          "name": "My Projects Hub",
-          "url": "https://commanderwi11.github.io/My_Projects_Hub/",
-          "desc": "Password-gated index and one-click launcher for all projects across Personal, Airnest, and Pilot HQs",
-          "long": "A private index and one-click launcher for every project across the personal, business and aviation workspaces, rendering a manifest of projects and their runnable actions with live streamed output for each run. Built as a zero-dependency Node server plus a minimalist static console UI, with layered access control: unrestricted on the local machine, password plus TOTP login for remote access over a Tailscale tunnel with an extra step-up check, and sensitive actions blocked entirely outside the local machine. Its public page is this projects list; the launcher, manifest, and server code stay off the public repo. Live and actively extended."
-        },
-        {
-          "id": "whoop-whatsapp",
-          "name": "Whoop WhatsApp",
-          "url": "https://whoop-whatsapp.vercel.app",
-          "desc": "Twice-daily pipeline: fetches WHOOP health data and emails structured metrics to a WhatsApp coaching bot for interpretation",
-          "long": "A multi-tenant data pipeline that connects to the WHOOP developer API, pulls each user's latest recovery, sleep, and workout metrics twice a day, and emails a structured JSON payload to a downstream WhatsApp coaching bot that turns it into a readable briefing. Deliberately scoped as a reliable data pipe with no interpretation logic of its own, it handles OAuth token storage, per-user timezone scheduling, and strict tenant isolation. Built with Next.js and React on Vercel, with Supabase for the database, row-level security, and scheduled edge functions, plus Resend for transactional email. Active and running on schedule."
-        },
-        {
-          "id": "bsa-options",
-          "name": "BSA Options",
-          "url": "https://bsa-options.pages.dev",
-          "desc": "Automated Idealista inbox sync, buyer triage, pipeline tracking, and AI-drafted replies for the Gran Canaria apartment sale",
-          "long": "An automation toolkit for marketing and selling a residential property through Spanish real-estate portals. It logs into the listing portal with a persistent browser session, syncs the message inbox, classifies incoming enquiries to separate genuine buyers from agency solicitations, tracks each conversation through a staged pipeline, and generates reply drafts that a human reviews and approves before anything is sent. Written in Node.js and TypeScript with Playwright for portal automation, SQLite for local storage, the Anthropic SDK for triage and drafting, and Vitest for tests; a local review dashboard plus an access-gated static snapshot published to Cloudflare Pages provide the front end. Active, running on a daily automated cycle with human approval in the loop."
-        },
-        {
-          "id": "flight-portal",
-          "name": "Flight Portal (Angelita)",
-          "url": "https://angelita-vuelos.vercel.app",
-          "desc": "Flight search portal for my mother — find and request round-trips or one-way flights, with email confirmation via Resend",
-          "long": "A small Spanish-language flight search portal designed for a non-technical relative, letting them look up round-trip or one-way itineraries, pick outbound and return legs from time-sorted results, and submit a request that is emailed onward for booking. The interface is intentionally simple, with trip-type toggles, full airline names alongside flight numbers, and a plain-language confirmation screen. Built on Next.js and React with Tailwind CSS, a third-party flight data API for schedules, and Resend for email notifications, deployed on Vercel with a test suite covering the search and request flows. Live and in use, with an updated visual design ready to ship."
-        },
-        {
-          "id": "pilot-finance",
-          "name": "Pilot Finance",
-          "url": "https://github.com/CommanderWi11/Pilot_Finance",
-          "desc": "Next.js + Supabase web app for tracking pilot personal finances — payslips, expenses, and charts",
-          "long": "A personal finance web app tailored to airline pilots, whose pay varies month to month with flight hours, allowances, and per-diems. It ingests payslips, records and categorises expenses, and renders trends and breakdowns as interactive charts so income variability and spending patterns are visible over time. Built with Next.js on the App Router, Supabase for authentication, Postgres storage and row-level security, Recharts for visualisation, Tailwind CSS for styling, and the Anthropic SDK for assisted document parsing and insights. Active and under ongoing development."
-        },
-        {
-          "id": "the-shopper",
-          "name": "The Shopper",
-          "url": "",
-          "desc": "Autonomous online-buying agent — finds the product, logs in to the merchant, checks out and pays from a hard-capped virtual card, then logs the order",
-          "long": "An autonomous purchasing agent: given \"buy X\" it finds the product, applies a written set of buying rules, logs in to the merchant, drives checkout in a real browser and pays with a dedicated virtual card that carries a hard spend cap, then records the order in a running log. The cap is the safety model, enforced by the card issuer rather than the agent's judgement, so anything larger stops and asks first; card details live in the operating system keychain and are never printed or read back. Built on browser automation with per-merchant playbooks for the sites used most often, each documenting the checkout quirks that break naive automation. Operational, and deliberately local only: no repository, nothing published."
-        }
-      ]
-    },
-    {
-      "id": "airnest",
-      "label": "Airnest",
-      "projects": [
-        {
-          "id": "airnest-shared",
-          "name": "Airnest Shared",
-          "url": "",
-          "desc": "Local archive and authoring workspace for Airnest's internal documents (CEO briefings, integration reports, meeting briefs); the public portal it used to publish to was retired in 2026",
-          "long": "The document workspace behind Airnest's internal reporting: CEO briefings, integration status reports, meeting briefs and operational snapshots, each authored as a self-contained HTML artifact against a shared house style, alongside the reusable document and email templates everything is built from. It used to publish those artifacts to a public static site sitting behind a passcode screen. That portal was retired in September 2026, once it was clear the gate was client-side only and every document could be fetched directly regardless. Documents are sent by email now, and this remains a local archive and authoring space."
-        },
-        {
-          "id": "weekly-ops-briefing",
-          "name": "Weekly Ops Briefing",
-          "url": "https://github.com/Airnest-Homes-SL",
-          "desc": "Automated Monday CEO briefing pipeline — Claude reads all project files + Gmail, generates a reviewed report, and emails the CEO after my approval",
-          "long": "An automated weekly briefing pipeline that produces a short, bottom-line-first operations report for the CEO. A scheduled job runs Claude Code headlessly to read every project's working files plus the prior week's company email, drafts the briefing in markdown and light HTML, emails it for review, and then sends the approved version on, applying any inline corrections the reviewer replies with. Built from shell scripts, a macOS scheduler, and a Gmail integration; it has been running weekly since May 2026, with message threading so each edition chains into a single ongoing conversation."
-        },
-        {
-          "id": "mews-api-connector",
-          "name": "Mews API Connector",
-          "url": "https://github.com/Airnest-Homes-SL/mews-api-connector",
-          "desc": "Certified Mews integration client — stdlib-only Python wrappers for reservations, bills, and customers across all 8 properties",
-          "long": "A certified private-integration client for the Mews hospitality PMS, covering the certification process and the reusable code that came out of it. The client is dependency-free Python (3.10+, standard library only) with modules for reservations, bills, customers, and property configuration, per-property and portfolio access tokens supplied via environment variables, plus a recipe book and read/write test suites. Certification is complete and production credentials are in place across all eight properties; the client is in active use and packaged to be portable enough for the CEO to run his own instance."
-        },
-        {
-          "id": "guesty-mews-migration",
-          "name": "Guesty–Mews Migration",
-          "url": "https://github.com/Airnest-Homes-SL",
-          "desc": "Active PMS migration for all 8 Airnest properties from Guesty to Mews — API probes, field mapping, reservation imports, and per-property runbooks",
-          "long": "The working project for moving all eight Airnest properties off Guesty and onto Mews. It covers API probing on both platforms, an entity-by-entity map of what can be migrated programmatically versus rebuilt by hand, reservation and guest import file builders, per-property configuration runbooks, and user and role setup, using Python for extraction and transformation, spreadsheet import templates for the Mews side, and browser automation for interfaces with no API. Active and running property by property on a staged go-live schedule, with several hotels already fully migrated."
-        },
-        {
-          "id": "gestor-hospedajes",
-          "name": "Gestor Hospedajes",
-          "url": "https://github.com/Airnest-Homes-SL/Gestor_Hospedajes",
-          "desc": "Multi-tenant SaaS auto-filing Spanish SES.Hospedajes guest reports — per-unit owner remapping, XML PV/RH builders, SOAP submission",
-          "long": "A multi-tenant service that automates Spanish SES.Hospedajes guest reporting (RD 933/2021) for lodging operators, with per-unit remapping of owner registration numbers: the case native PMS integrations do not handle. The Python engine models reservations, validates and quarantines incomplete records rather than filing them, builds the PV and RH XML documents, and submits them over SOAP (ZIP plus Base64 payloads) or emits bulk-upload files; a Next.js dashboard and Postgres/Supabase job queue are designed but intentionally dormant. Built to EU data-residency and GDPR constraints, including a strict field allowlist and no storage of identity-document images. The engine core is complete and covered by tests, with the single-tenant filing mode shipping first."
-        },
-        {
-          "id": "airnest-ops-brain",
-          "name": "Airnest Ops Brain",
-          "url": "https://github.com/Airnest-Homes-SL",
-          "desc": "Architecture for Airnest's internal intelligence layer — FastMCP + SQLite data lake connecting 9 tools; Mews webhook receiver live on a cloud VPS",
-          "long": "The architecture and phased plan for Airnest's internal intelligence layer: a FastMCP server backed by a local SQLite data lake that consolidates the PMS, housekeeping, revenue management, accounting, banking, guest communications, HR, and energy-consumption systems into one queryable source, refreshed by a nightly sync plus real-time PMS webhooks. A first component is already deployed: a Mews webhook receiver running as a FastAPI service behind Nginx with TLS on a small cloud VPS. The wider build is deliberately on hold behind the PMS migration and the guest-communications rollout, with the full schema, tool inventory, and phase gates documented in the meantime."
-        },
-        {
-          "id": "conduit-onboarding",
-          "name": "Conduit Onboarding",
-          "url": "https://github.com/Airnest-Homes-SL",
-          "desc": "Procurement tracker for Conduit.ai as Airnest's AI front-desk — WhatsApp, OTA inbox, email, voice AI, and Mews integration",
-          "long": "A procurement and onboarding workspace for adopting Conduit as Airnest's AI front desk, covering guest messaging across WhatsApp, OTA inboxes, email, and voice, connected to the PMS. It tracks commercial negotiation, listing and property configuration, staff workflows, and an ongoing defect log, and includes a scheduled automation that reads the mailbox, reconciles a Notion bug tracker, and emails a weekly change report. The platform is live in production with high automation coverage; commercial terms and the open defect backlog remain under active review, alongside a documented plan to reassess once the PMS ships native guest messaging."
-        },
-        {
-          "id": "infrastructure-setup",
-          "name": "Infrastructure Setup",
-          "url": "https://github.com/Airnest-Homes-SL/infrastructure-setup",
-          "desc": "Living inventory and change log for all Airnest HQ infrastructure — where every repo, service, secret, and shared doc lives",
-          "long": "A living inventory and change log for Airnest's technical setup, a reference project rather than a codebase. It records where every repository, hosted service, domain, certificate, scheduled job, and shared document lives, plus pointers to where each secret is stored (never the values themselves), and requires a dated entry for any infrastructure change. The initial consolidation into a company-owned GitHub organisation is complete, and the inventory is maintained as the source of truth for 'where does this live?' questions."
-        },
-        {
-          "id": "siteminder-workshop",
-          "name": "SiteMinder Workshop",
-          "url": "https://github.com/Airnest-Homes-SL",
-          "desc": "Sets up SiteMinder as Airnest's channel manager between Mews and the OTAs (Booking.com, Airbnb, Expedia) — account/property config, activation, go-live tracking",
-          "long": "Sets up SiteMinder as the channel manager sitting between Mews and the OTAs, so availability and rates push outward and bookings flow back in. Scope covers account and property configuration, room-type and rate-plan mapping between the two systems, scraping and normalising property and room descriptions so listings launch complete, and OTA channel mapping with go-live checks. Research recorded here established that SiteMinder exposes no configuration write API to hotelier customers, so setup is done through the web UI with browser automation for repetitive edits. The first property's room types are configured and verified and the Mews link has passed testing, with activation and a possible PMS-native channel-manager alternative still being evaluated."
-        }
-      ]
-    },
-    {
-      "id": "pilot",
-      "label": "Pilot",
-      "projects": [
-        {
-          "id": "crew-briefing",
-          "name": "Crew Briefing",
-          "url": "https://github.com/CommanderWi11/Crew-Briefing",
-          "desc": "Automated pre-flight briefing for Binter E195-E2 — headless Playwright PDF scraper, weather and NOTAM extraction, and HTML email timed to STD−90min via launchd",
-          "long": "A Python pipeline that assembles a complete pre-flight briefing for E195-E2 operations without manual work: it logs into the airline's flight-planning and operations portals headlessly with Playwright, downloads the operational flight plan and related PDFs, and extracts weather, NOTAMs, route data and open deferred-maintenance (MEL/CDL) items into a single structured brief. Output is a styled HTML email with generated PDF attachments (flight-level and wind tables, and an indexed MEL extract), delivered on a schedule keyed to scheduled departure time. It also includes a fuel-first cruise advisor that interpolates published aircraft performance tables to suggest optimum level and Mach, and refuses to extrapolate outside the published data. Built with Python, Playwright and PDF parsing libraries; actively used on the line and backed by roughly 250 automated tests."
-        },
-        {
-          "id": "flight-bag",
-          "name": "Flight Bag",
-          "url": "https://github.com/CommanderWi11/Flight_Bag",
-          "desc": "Pilot operations suite — daily Binter Gmail capture and classification, Monday manual mirror with highlight promotion, and dual-mode pre-flight schedule digest",
-          "long": "A pilot operations suite that keeps day-to-day airline paperwork current and pushes only what matters into the inbox. It performs a daily read-only capture of company email and schedule data, classifies communications by type, mirrors the document manager on a weekly schedule to pull down new manual revisions, and automatically carries a pilot's PDF highlights across from the superseded revision to the new one. A dual-mode digest email covers either the working day or the eve of a duty block, listing new communications, attaching the relevant PDFs and flagging special activities such as line checks read from the parsed roster. Written in Python with the Gmail API, headless browser automation and PDF tooling; in production, having been narrowed in 2026 from a broader study hub into a focused operations data pipeline."
-        },
-        {
-          "id": "ecrew-mcp",
-          "name": "eCrew MCP",
-          "url": "https://github.com/CommanderWi11/MCP_Projects",
-          "desc": "MCP server for Binter eCrew portal — headless login, monthly roster PDF download, structured parsing of flights and standby duties, and Claude tool exposure",
-          "long": "A Model Context Protocol server that makes the airline's crew portal queryable from Claude. It performs a headless Playwright login, navigates the scheduling module to export the monthly roster PDF, and parses it into structured JSON (flights and legs with times, deadheads, standby and training duties, hotels and monthly statistics), with per-month caching and a scheduled pre-warm so downstream tools can read the data without logging in. Built in Node and TypeScript on the official MCP SDK over stdio, using pdfjs-dist for parsing, with credentials kept outside the repository and an offline test suite run against fixtures. Version 1 is shipped and verified end to end, has survived a portal front-end redesign, and its cached output feeds the other pilot projects."
-        },
-        {
-          "id": "informes-binter",
-          "name": "Informes Binter",
-          "url": "",
-          "desc": "Drafts and fills the airline's operational web reports (delay, captain, safety) from raw event notes — a template per report type, and never submits",
-          "long": "An assistant for the airline's operational reporting forms: delay reports, captain's reports and air safety reports. Each report type is taught once and stored as a field map plus a register-and-tone guide, so a later event only needs the raw facts: the assistant drafts the narrative in the expected style, fills the web form through browser automation, and hands it back for a human to check and submit. Aircraft registration and flight numbers are looked up automatically from the archived pre-flight briefing for the date in question, so they never have to be retyped. Spanish-language project; two report types taught and proven on real events, with the rest added as they come up."
-        },
-        {
-          "id": "binter-ops-mcp",
-          "name": "Binter Ops MCP",
-          "url": "https://github.com/CommanderWi11/MCP_Projects",
-          "desc": "MCP server for the airline's operations portal — headless login and structured extraction of the day's line (forecast, parking, crew, turnaround)",
-          "long": "A Model Context Protocol server that logs in to a third airline operations portal headlessly and returns the day's line as structured data: operational forecast, stand and parking assignment, crew composition and turnaround times. It reuses the crew-portal identity rather than keeping a separate credential, and exposes both MCP tools and a small command-line entry point that the pre-flight briefing pipeline calls directly to fold portal data into the briefing email. Written in TypeScript on the official MCP SDK with Playwright driving the login, and sharing a repository with the crew-roster MCP server. Live and feeding the briefing."
-        }
-      ]
-    }
-  ]
-}
-</script>
+
+<script>window.__PROJECTS__=[{"id":"ai-supastack","hq":"personal","name":"AI Supastack","url":"https://commanderwi11.github.io/AI_Supastack/","desc":"Personal reference wiki for my AI software stack — 16 technology sections with install notes, links, and gotchas (read-only)","long":"A single-page reference wiki documenting the full AI software stack on my machine: 16 ordered sections covering package management, runtimes, CLI tools, local models, Claude Code plugins, MCP servers, and custom skills, each with links and personal setup notes. Built as one self-contained HTML file on GitHub Pages with no build step. Formerly featured in-page editing and weekly auto-sync; now maintained as a read-only reference.","kind":"live","preview":true},{"id":"family-plan","hq":"personal","name":"Family Plan","url":"https://family-plan.pages.dev","desc":"Family logistics hub — school calendar, parental leave tracker, baby daily log, routines, health notes, and admin paperwork (Supabase auth)","long":"A private family logistics hub that brings the school calendar, parental-leave planning, a baby daily log, household routines, health notes and administrative paperwork tracking into one dashboard. Built as a static progressive web app with vanilla JavaScript and Supabase for authentication and cross-device sync, deployed on Cloudflare Pages. Bilingual by design, with Spanish used wherever content touches school and local admin. Live and actively used.","kind":"live","preview":true},{"id":"family-trip-japan","hq":"personal","name":"Family Trip Japan","url":"https://commanderwi11.github.io/Family_Trip_Japan/","desc":"Trip planning site for a family journey through Japan — itinerary, destination cards, motorhome planner, and editable research notes","long":"A trip-planning site for an extended family journey through Japan, organising the route as day-by-day itinerary stages, destination cards, a campervan leg planner, logistics notes and an editable research and checklist area. Built with plain HTML, CSS and JavaScript as an installable progressive web app, with all notes and checklist state stored locally in the browser and no backend or login. Hosted on GitHub Pages. Live, updated as planning progresses.","kind":"live","preview":true},{"id":"family-week","hq":"personal","name":"Family Week","url":"https://family-week.pages.dev","desc":"Weekly family planning ritual — traditions, meals, routines, and shopping list, synced between partners via Supabase","long":"A weekly family planning app that turns the household's Sunday planning ritual into a shared board covering traditions, meals, routines and the shopping list, plus a history view and a printable weekly sheet. Built as a vanilla JavaScript progressive web app with Supabase for auth and real-time data, so both partners see the same plan from their own devices, and deployed on Cloudflare Pages. Live and in weekly use.","kind":"live","preview":true},{"id":"byd-control","hq":"personal","name":"BYD Control","url":"https://byd-control.vercel.app","desc":"Remote control dashboard and CLI for the BYD Seal U DM-i — lock/unlock, charging, climate, locate, horn, and live vehicle status","long":"A remote control dashboard for a plug-in hybrid vehicle, exposing lock/unlock, charging start/stop, climate and defrost, horn, vehicle locating and live status (range, doors, charge state) through both a web UI and a companion command-line tool. The web app is built with Next.js, React and Tailwind with OAuth-based single-user access control and is deployed on Vercel; the CLI is TypeScript with local keychain-style credential storage, and the vehicle API layer is covered by unit tests. Includes handling for the car's telematics sleep state so cached readings are clearly flagged as stale. Live and functional.","kind":"live","preview":false},{"id":"home-quest-qh","hq":"personal","name":"Home Quest QH","url":"https://commanderwi11.github.io/Home_Quest_QH/","desc":"Daily automated family house search for Gran Canaria — harvests Idealista, has Claude research and rank each candidate against the family brief (budget, bedrooms, garden, office), publishes a Top-5 + Favorites dashboard","long":"An automated daily house-hunting pipeline for a family home search on Gran Canaria. Each night it harvests fresh listings from the main Spanish property portal via a browser-driven scraper, then has a headless Claude agent open and deeply research each serious candidate against cross-portal data and a written family rubric, before a validation stage folds the results into a published dashboard of the day's Top 5 plus starred favourites and a browsable archive of previous runs. Built in Python with Playwright, a JSON data contract and pytest coverage, running two independent search tracks (a target district and the wider island) and publishing to a static GitHub Pages site. Active, running daily.","kind":"live","preview":false},{"id":"my-projects-hub","hq":"personal","name":"My Projects Hub","url":"https://commanderwi11.github.io/My_Projects_Hub/","desc":"Password-gated index and one-click launcher for all projects across Personal, Airnest, and Pilot HQs","long":"A private index and one-click launcher for every project across the personal, business and aviation workspaces, rendering a manifest of projects and their runnable actions with live streamed output for each run. Built as a zero-dependency Node server plus a minimalist static console UI, with layered access control: unrestricted on the local machine, password plus TOTP login for remote access over a Tailscale tunnel with an extra step-up check, and sensitive actions blocked entirely outside the local machine. Its public page is this projects list; the launcher, manifest, and server code stay off the public repo. Live and actively extended.","kind":"live","preview":false},{"id":"whoop-whatsapp","hq":"personal","name":"Whoop WhatsApp","url":"https://whoop-whatsapp.vercel.app","desc":"Twice-daily pipeline: fetches WHOOP health data and emails structured metrics to a WhatsApp coaching bot for interpretation","long":"A multi-tenant data pipeline that connects to the WHOOP developer API, pulls each user's latest recovery, sleep, and workout metrics twice a day, and emails a structured JSON payload to a downstream WhatsApp coaching bot that turns it into a readable briefing. Deliberately scoped as a reliable data pipe with no interpretation logic of its own, it handles OAuth token storage, per-user timezone scheduling, and strict tenant isolation. Built with Next.js and React on Vercel, with Supabase for the database, row-level security, and scheduled edge functions, plus Resend for transactional email. Active and running on schedule.","kind":"live","preview":false},{"id":"bsa-options","hq":"personal","name":"BSA Options","url":"https://bsa-options.pages.dev","desc":"Automated Idealista inbox sync, buyer triage, pipeline tracking, and AI-drafted replies for the Gran Canaria apartment sale","long":"An automation toolkit for marketing and selling a residential property through Spanish real-estate portals. It logs into the listing portal with a persistent browser session, syncs the message inbox, classifies incoming enquiries to separate genuine buyers from agency solicitations, tracks each conversation through a staged pipeline, and generates reply drafts that a human reviews and approves before anything is sent. Written in Node.js and TypeScript with Playwright for portal automation, SQLite for local storage, the Anthropic SDK for triage and drafting, and Vitest for tests; a local review dashboard plus an access-gated static snapshot published to Cloudflare Pages provide the front end. Active, running on a daily automated cycle with human approval in the loop.","kind":"live","preview":false},{"id":"flight-portal","hq":"personal","name":"Flight Portal (Angelita)","url":"https://angelita-vuelos.vercel.app","desc":"Flight search portal for my mother — find and request round-trips or one-way flights, with email confirmation via Resend","long":"A small Spanish-language flight search portal designed for a non-technical relative, letting them look up round-trip or one-way itineraries, pick outbound and return legs from time-sorted results, and submit a request that is emailed onward for booking. The interface is intentionally simple, with trip-type toggles, full airline names alongside flight numbers, and a plain-language confirmation screen. Built on Next.js and React with Tailwind CSS, a third-party flight data API for schedules, and Resend for email notifications, deployed on Vercel with a test suite covering the search and request flows. Live and in use, with an updated visual design ready to ship.","kind":"live","preview":true},{"id":"pilot-finance","hq":"personal","name":"Pilot Finance","url":"https://github.com/CommanderWi11/Pilot_Finance","desc":"Next.js + Supabase web app for tracking pilot personal finances — payslips, expenses, and charts","long":"A personal finance web app tailored to airline pilots, whose pay varies month to month with flight hours, allowances, and per-diems. It ingests payslips, records and categorises expenses, and renders trends and breakdowns as interactive charts so income variability and spending patterns are visible over time. Built with Next.js on the App Router, Supabase for authentication, Postgres storage and row-level security, Recharts for visualisation, Tailwind CSS for styling, and the Anthropic SDK for assisted document parsing and insights. Active and under ongoing development.","kind":"repo","preview":false},{"id":"weekly-ops-briefing","hq":"airnest","name":"Weekly Ops Briefing","url":"https://github.com/Airnest-Homes-SL","desc":"Automated Monday CEO briefing pipeline — Claude reads all project files + Gmail, generates a reviewed report, and emails the CEO after my approval","long":"An automated weekly briefing pipeline that produces a short, bottom-line-first operations report for the CEO. A scheduled job runs Claude Code headlessly to read every project's working files plus the prior week's company email, drafts the briefing in markdown and light HTML, emails it for review, and then sends the approved version on, applying any inline corrections the reviewer replies with. Built from shell scripts, a macOS scheduler, and a Gmail integration; it has been running weekly since May 2026, with message threading so each edition chains into a single ongoing conversation.","kind":"repo","preview":false},{"id":"mews-api-connector","hq":"airnest","name":"Mews API Connector","url":"https://github.com/Airnest-Homes-SL/mews-api-connector","desc":"Certified Mews integration client — stdlib-only Python wrappers for reservations, bills, and customers across all 8 properties","long":"A certified private-integration client for the Mews hospitality PMS, covering the certification process and the reusable code that came out of it. The client is dependency-free Python (3.10+, standard library only) with modules for reservations, bills, customers, and property configuration, per-property and portfolio access tokens supplied via environment variables, plus a recipe book and read/write test suites. Certification is complete and production credentials are in place across all eight properties; the client is in active use and packaged to be portable enough for the CEO to run his own instance.","kind":"repo","preview":false},{"id":"guesty-mews-migration","hq":"airnest","name":"Guesty–Mews Migration","url":"https://github.com/Airnest-Homes-SL","desc":"Active PMS migration for all 8 Airnest properties from Guesty to Mews — API probes, field mapping, reservation imports, and per-property runbooks","long":"The working project for moving all eight Airnest properties off Guesty and onto Mews. It covers API probing on both platforms, an entity-by-entity map of what can be migrated programmatically versus rebuilt by hand, reservation and guest import file builders, per-property configuration runbooks, and user and role setup, using Python for extraction and transformation, spreadsheet import templates for the Mews side, and browser automation for interfaces with no API. Active and running property by property on a staged go-live schedule, with several hotels already fully migrated.","kind":"repo","preview":false},{"id":"gestor-hospedajes","hq":"airnest","name":"Gestor Hospedajes","url":"https://github.com/Airnest-Homes-SL/Gestor_Hospedajes","desc":"Multi-tenant SaaS auto-filing Spanish SES.Hospedajes guest reports — per-unit owner remapping, XML PV/RH builders, SOAP submission","long":"A multi-tenant service that automates Spanish SES.Hospedajes guest reporting (RD 933/2021) for lodging operators, with per-unit remapping of owner registration numbers: the case native PMS integrations do not handle. The Python engine models reservations, validates and quarantines incomplete records rather than filing them, builds the PV and RH XML documents, and submits them over SOAP (ZIP plus Base64 payloads) or emits bulk-upload files; a Next.js dashboard and Postgres/Supabase job queue are designed but intentionally dormant. Built to EU data-residency and GDPR constraints, including a strict field allowlist and no storage of identity-document images. The engine core is complete and covered by tests, with the single-tenant filing mode shipping first.","kind":"repo","preview":false},{"id":"airnest-ops-brain","hq":"airnest","name":"Airnest Ops Brain","url":"https://github.com/Airnest-Homes-SL","desc":"Architecture for Airnest's internal intelligence layer — FastMCP + SQLite data lake connecting 9 tools; Mews webhook receiver live on a cloud VPS","long":"The architecture and phased plan for Airnest's internal intelligence layer: a FastMCP server backed by a local SQLite data lake that consolidates the PMS, housekeeping, revenue management, accounting, banking, guest communications, HR, and energy-consumption systems into one queryable source, refreshed by a nightly sync plus real-time PMS webhooks. A first component is already deployed: a Mews webhook receiver running as a FastAPI service behind Nginx with TLS on a small cloud VPS. The wider build is deliberately on hold behind the PMS migration and the guest-communications rollout, with the full schema, tool inventory, and phase gates documented in the meantime.","kind":"repo","preview":false},{"id":"conduit-onboarding","hq":"airnest","name":"Conduit Onboarding","url":"https://github.com/Airnest-Homes-SL","desc":"Procurement tracker for Conduit.ai as Airnest's AI front-desk — WhatsApp, OTA inbox, email, voice AI, and Mews integration","long":"A procurement and onboarding workspace for adopting Conduit as Airnest's AI front desk, covering guest messaging across WhatsApp, OTA inboxes, email, and voice, connected to the PMS. It tracks commercial negotiation, listing and property configuration, staff workflows, and an ongoing defect log, and includes a scheduled automation that reads the mailbox, reconciles a Notion bug tracker, and emails a weekly change report. The platform is live in production with high automation coverage; commercial terms and the open defect backlog remain under active review, alongside a documented plan to reassess once the PMS ships native guest messaging.","kind":"repo","preview":false},{"id":"infrastructure-setup","hq":"airnest","name":"Infrastructure Setup","url":"https://github.com/Airnest-Homes-SL/infrastructure-setup","desc":"Living inventory and change log for all Airnest HQ infrastructure — where every repo, service, secret, and shared doc lives","long":"A living inventory and change log for Airnest's technical setup, a reference project rather than a codebase. It records where every repository, hosted service, domain, certificate, scheduled job, and shared document lives, plus pointers to where each secret is stored (never the values themselves), and requires a dated entry for any infrastructure change. The initial consolidation into a company-owned GitHub organisation is complete, and the inventory is maintained as the source of truth for 'where does this live?' questions.","kind":"repo","preview":false},{"id":"siteminder-workshop","hq":"airnest","name":"SiteMinder Workshop","url":"https://github.com/Airnest-Homes-SL","desc":"Sets up SiteMinder as Airnest's channel manager between Mews and the OTAs (Booking.com, Airbnb, Expedia) — account/property config, activation, go-live tracking","long":"Sets up SiteMinder as the channel manager sitting between Mews and the OTAs, so availability and rates push outward and bookings flow back in. Scope covers account and property configuration, room-type and rate-plan mapping between the two systems, scraping and normalising property and room descriptions so listings launch complete, and OTA channel mapping with go-live checks. Research recorded here established that SiteMinder exposes no configuration write API to hotelier customers, so setup is done through the web UI with browser automation for repetitive edits. The first property's room types are configured and verified and the Mews link has passed testing, with activation and a possible PMS-native channel-manager alternative still being evaluated.","kind":"repo","preview":false},{"id":"crew-briefing","hq":"pilot","name":"Crew Briefing","url":"https://github.com/CommanderWi11/Crew-Briefing","desc":"Automated pre-flight briefing for Binter E195-E2 — headless Playwright PDF scraper, weather and NOTAM extraction, and HTML email timed to STD−90min via launchd","long":"A Python pipeline that assembles a complete pre-flight briefing for E195-E2 operations without manual work: it logs into the airline's flight-planning and operations portals headlessly with Playwright, downloads the operational flight plan and related PDFs, and extracts weather, NOTAMs, route data and open deferred-maintenance (MEL/CDL) items into a single structured brief. Output is a styled HTML email with generated PDF attachments (flight-level and wind tables, and an indexed MEL extract), delivered on a schedule keyed to scheduled departure time. It also includes a fuel-first cruise advisor that interpolates published aircraft performance tables to suggest optimum level and Mach, and refuses to extrapolate outside the published data. Built with Python, Playwright and PDF parsing libraries; actively used on the line and backed by roughly 250 automated tests.","kind":"repo","preview":false},{"id":"flight-bag","hq":"pilot","name":"Flight Bag","url":"https://github.com/CommanderWi11/Flight_Bag","desc":"Pilot operations suite — daily Binter Gmail capture and classification, Monday manual mirror with highlight promotion, and dual-mode pre-flight schedule digest","long":"A pilot operations suite that keeps day-to-day airline paperwork current and pushes only what matters into the inbox. It performs a daily read-only capture of company email and schedule data, classifies communications by type, mirrors the document manager on a weekly schedule to pull down new manual revisions, and automatically carries a pilot's PDF highlights across from the superseded revision to the new one. A dual-mode digest email covers either the working day or the eve of a duty block, listing new communications, attaching the relevant PDFs and flagging special activities such as line checks read from the parsed roster. Written in Python with the Gmail API, headless browser automation and PDF tooling; in production, having been narrowed in 2026 from a broader study hub into a focused operations data pipeline.","kind":"repo","preview":false},{"id":"ecrew-mcp","hq":"pilot","name":"eCrew MCP","url":"https://github.com/CommanderWi11/MCP_Projects","desc":"MCP server for Binter eCrew portal — headless login, monthly roster PDF download, structured parsing of flights and standby duties, and Claude tool exposure","long":"A Model Context Protocol server that makes the airline's crew portal queryable from Claude. It performs a headless Playwright login, navigates the scheduling module to export the monthly roster PDF, and parses it into structured JSON (flights and legs with times, deadheads, standby and training duties, hotels and monthly statistics), with per-month caching and a scheduled pre-warm so downstream tools can read the data without logging in. Built in Node and TypeScript on the official MCP SDK over stdio, using pdfjs-dist for parsing, with credentials kept outside the repository and an offline test suite run against fixtures. Version 1 is shipped and verified end to end, has survived a portal front-end redesign, and its cached output feeds the other pilot projects.","kind":"repo","preview":false},{"id":"binter-ops-mcp","hq":"pilot","name":"Binter Ops MCP","url":"https://github.com/CommanderWi11/MCP_Projects","desc":"MCP server for the airline's operations portal — headless login and structured extraction of the day's line (forecast, parking, crew, turnaround)","long":"A Model Context Protocol server that logs in to a third airline operations portal headlessly and returns the day's line as structured data: operational forecast, stand and parking assignment, crew composition and turnaround times. It reuses the crew-portal identity rather than keeping a separate credential, and exposes both MCP tools and a small command-line entry point that the pre-flight briefing pipeline calls directly to fold portal data into the briefing email. Written in TypeScript on the official MCP SDK with Playwright driving the login, and sharing a repository with the crew-roster MCP server. Live and feeding the briefing.","kind":"repo","preview":false}];</script>
 <script>
-(function () {
-  var root = document.documentElement;
-  document.getElementById('theme-toggle').addEventListener('click', function () {
-    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    try { localStorage.setItem('mph_theme', next); } catch (e) {}
+(function(){
+var P=window.__PROJECTS__,HQ=["personal","airnest","pilot"],
+    L={personal:"Personal",airnest:"Airnest",pilot:"Pilot"},
+    view="live",hq="all",q="";
+var $=function(i){return document.getElementById(i)};
+var groups=$("groups"),empty=$("empty"),count=$("count"),tabs=$("tabs"),search=$("search");
+
+$("theme-toggle").addEventListener("click",function(){
+  var n=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",n);
+  try{localStorage.setItem("mph_theme",n)}catch(e){}
+});
+
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function target(u){try{var x=new URL(u);var p=x.pathname.replace(/\/$/,"");return x.hostname.replace(/^www\./,"")+(p&&p!=="/"?p:"")}catch(e){return u}}
+function initials(n){return n.replace(/[^A-Za-z0-9 ]/g," ").split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0]}).join("")}
+
+var ARROW='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>';
+var IO=null,RO=null;
+function obs(){
+  if(!IO&&window.IntersectionObserver)IO=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){IO.unobserve(e.target);start(e.target)}})},{rootMargin:"500px 0px"});
+  if(!RO&&window.ResizeObserver)RO=new ResizeObserver(function(es){es.forEach(function(e){scale(e.target)})});
+  return{io:IO,ro:RO}
+}
+function scale(b){var w=b.clientWidth;if(w)b.style.setProperty("--pv-scale",(w/1280).toFixed(4))}
+function start(b){
+  var f=b.querySelector(".preview-frame");if(!f||f.src)return;
+  var t=setTimeout(function(){b.innerHTML='<div class="plate"><span class="plate-mark">'+esc(b.dataset.mark||"")+'</span></div>'},20000);
+  f.addEventListener("load",function(){clearTimeout(t);b.classList.add("ready")},{once:true});
+  f.src=f.dataset.src;
+}
+
+function match(p){
+  if(view==="other"?p.kind==="live":p.kind!=="live")return false;
+  if(hq!=="all"&&p.hq!==hq)return false;
+  if(!q)return true;
+  return (p.name+" "+p.desc+" "+p.long).toLowerCase().indexOf(q)>-1;
+}
+
+function render(){
+  if(IO){IO.disconnect();IO=null}
+  if(RO){RO.disconnect();RO=null}
+  groups.innerHTML="";
+  var vis=P.filter(match);
+  empty.hidden=vis.length>0;
+  if(!vis.length)empty.textContent=q?'Nothing matches \u201c'+q+'\u201d in this tab.':"Nothing here.";
+  var by={};vis.forEach(function(p){(by[p.hq]=by[p.hq]||[]).push(p)});
+  var n=0;
+  HQ.forEach(function(h){
+    var list=by[h];if(!list||!list.length)return;
+    var sec=document.createElement("section");
+    sec.innerHTML='<div class="group-head"><span class="group-name">'+L[h]+'</span><span class="group-rule"></span><span class="group-count">'+String(list.length).padStart(2,"0")+'</span></div>';
+    var g=document.createElement("div");g.className="grid";
+    list.forEach(function(p){g.appendChild(card(p,n++))});
+    sec.appendChild(g);groups.appendChild(sec);
   });
-  // Links inside <summary> must navigate without toggling the card.
-  document.querySelectorAll('summary a').forEach(function (a) {
-    a.addEventListener('click', function (ev) { ev.stopPropagation(); });
-  });
-  var chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
-  var groups = Array.prototype.slice.call(document.querySelectorAll('.group'));
-  chips.forEach(function (chip) {
-    chip.addEventListener('click', function () {
-      chips.forEach(function (c) { c.classList.toggle('active', c === chip); });
-      var f = chip.getAttribute('data-filter');
-      groups.forEach(function (g) {
-        g.hidden = (f !== 'all' && g.getAttribute('data-group') !== f);
-      });
+  var pool=P.filter(function(p){return view==="other"?p.kind!=="live":p.kind==="live"}).length;
+  count.textContent=vis.length===pool?pool+" projects":vis.length+" / "+pool;
+}
+
+function card(p,n){
+  var el=document.createElement("article");
+  el.className="card";
+  el.style.animationDelay=Math.min(n*0.03,0.42)+"s";
+
+  if(p.preview){
+    var b=document.createElement("div");
+    b.className="preview";
+    b.dataset.mark=initials(p.name);
+    b.innerHTML='<div class="preview-skel"></div>';
+    var f=document.createElement("iframe");
+    f.className="preview-frame";f.loading="lazy";
+    f.setAttribute("sandbox","allow-scripts allow-same-origin");
+    f.setAttribute("referrerpolicy","no-referrer");
+    f.setAttribute("title",p.name+" preview");
+    f.setAttribute("aria-hidden","true");f.tabIndex=-1;
+    f.dataset.src=p.url;
+    b.appendChild(f);
+    var o=obs();if(o.ro)o.ro.observe(b);
+    requestAnimationFrame(function(){scale(b)});
+    if(o.io)o.io.observe(b);else start(b);
+    el.appendChild(b);
+  }else{
+    el.insertAdjacentHTML("beforeend",'<div class="plate"><span class="plate-mark">'+esc(initials(p.name))+'</span></div>');
+  }
+
+  el.insertAdjacentHTML("beforeend",
+    '<div class="card-meta"><span class="card-index">'+String(n+1).padStart(2,"0")+'</span>'+
+    '<span class="card-meta-rule"></span><span class="card-tag'+(p.kind==="live"?" live":"")+'">'+
+    (p.kind==="live"?"Live":"Repo")+'</span></div>'+
+    '<h3 class="card-title">'+esc(p.name)+'</h3>'+
+    '<p class="card-desc">'+esc(p.desc)+'</p>');
+
+  if(p.long){
+    var btn=document.createElement("button");
+    btn.className="more";btn.type="button";btn.textContent="+ More";
+    var lp=document.createElement("p");
+    lp.className="card-long";lp.hidden=true;lp.textContent=p.long;
+    btn.addEventListener("click",function(){
+      lp.hidden=!lp.hidden;
+      btn.textContent=lp.hidden?"+ More":"\u2212 Less";
     });
-  });
+    el.appendChild(btn);el.appendChild(lp);
+  }
+
+  var a=document.createElement("a");
+  a.className=p.kind==="live"?"open-bar":"repo-bar";
+  a.href=p.url;a.target="_blank";a.rel="noopener noreferrer";
+  a.innerHTML='<span class="open-label">'+(p.kind==="live"?"Open":"View repo")+'</span>'+
+    '<span class="open-host"><span class="open-host-text">'+esc(target(p.url))+'</span>'+ARROW+'</span>';
+  el.appendChild(a);
+  return el;
+}
+
+function moveInd(anim){
+  var ind=tabs.querySelector(".tab-ind"),act=tabs.querySelector(".tab.active");
+  if(!ind||!act)return;
+  if(!anim)tabs.classList.add("no-anim");
+  ind.style.width=act.offsetWidth+"px";
+  ind.style.setProperty("--ind-x",act.offsetLeft+"px");
+  if(!anim)requestAnimationFrame(function(){tabs.classList.remove("no-anim")});
+}
+tabs.addEventListener("click",function(e){
+  var b=e.target.closest(".tab");if(!b)return;
+  tabs.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");t.setAttribute("aria-selected","false")});
+  b.classList.add("active");b.setAttribute("aria-selected","true");
+  hq=b.dataset.hq;view=b.dataset.view;moveInd(true);render();
+});
+search.addEventListener("input",function(){q=search.value.trim().toLowerCase();render()});
+window.addEventListener("resize",function(){moveInd(false)});
+
+render();moveInd(false);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){moveInd(false)});
 })();
 </script>
 </body>
